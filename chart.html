@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --bg:#f0fdf4;
+            --card:#ffffff;
+            --muted:#6b7280;
+            --accent:#059669;
+            --success:#10b981;
+            --danger:#f97316;
+            --warning:#f59e0b;
+            --glass: rgba(255,255,255,0.6);
+            --on-track-light:#ecfdf5;
+            --at-risk-light:#fff7ed;
+        }
+        html,body{height:100%;}
+        body {
+            font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #065f46 0%, #059669 25%, #10b981 50%, #34d399 75%, #6ee7b7 100%);
+            background-size: 400% 400%;
+            margin: 24px 12px;
+            color:#0f172a;
+        }
+        .container {
+            background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(240,253,250,0.95) 100%);
+            padding: 28px;
+            border-radius:16px;
+            box-shadow: 0 20px 60px rgba(5,150,105,0.2), 0 8px 30px rgba(15,23,42,0.1);
+            width: 100%;
+            max-width: 980px;
+            border: 1px solid rgba(5,150,105,0.15);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+        .container::before {
+            content: '$ $ $ $ $ $ $ $';
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 24px;
+            color: rgba(16, 185, 129, 0.15);
+            font-weight: bold;
+            letter-spacing: 8px;
+            pointer-events: none;
+        }
+        .container::after {
+            content: '$ $ $ $ $ $ $ $';
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 24px;
+            color: rgba(16, 185, 129, 0.15);
+            font-weight: bold;
+            letter-spacing: 8px;
+            pointer-events: none;
+        }
+        h1{font-family:'Merriweather',serif;font-weight:700;margin:0 0 8px 0;text-align:center;color:#0b1220;font-size:32px;letter-spacing:-0.5px;background: linear-gradient(135deg, #065f46, #059669);-webkit-background-clip: text;-webkit-text-fill-color: transparent;background-clip: text;}
+        h1::before {
+            content: '$ ';
+            color: #059669;
+            -webkit-text-fill-color: #059669;
+        }
+        h1::after {
+            content: ' $';
+            color: #059669;
+            -webkit-text-fill-color: #059669;
+        }
+        h3{font-weight:600;margin:8px 0;color:#1f2937;font-size:16px;text-transform:uppercase;letter-spacing:0.5px}
+        section{background: linear-gradient(180deg, rgba(240,253,250,0.9), rgba(229,250,245,0.9));padding:12px;border-radius:10px;margin-top:8px;border-left:4px solid var(--accent);box-shadow:0 4px 12px rgba(5,150,105,0.08)}
+        label{display:inline-flex;align-items:center;color:var(--muted)}
+        input[type=number], select{padding:8px 10px;border-radius:8px;border:2px solid rgba(5,150,105,0.3);background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(240,253,250,0.9));outline:none;width:160px;transition:0.2s}
+        input[type=number]:focus, select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(5,150,105,0.1)}
+        input::placeholder{color:#9ca3af}
+        #planningForm{display:grid;grid-template-columns:1fr;gap:12px}
+        .controls{display:flex;gap:8px}
+        button{cursor:pointer;border-radius:8px;padding:8px 12px;border:none;font-weight:600}
+        button:active{transform:translateY(1px)}
+        button.secondary{background:#fff;border:1px solid #e6e9f2;color:#0f172a;transition:0.2s}
+        button.secondary:hover{background:#f9fafb;border-color:#d1d5db}
+        button.primary{background:var(--accent);color:#fff;transition:0.2s}
+        button.primary:hover{background:#4338ca;box-shadow:0 4px 12px rgba(79,70,229,0.3)}
+        button.positive{background:var(--success);color:#fff;transition:0.2s}
+        button.positive:hover{background:#059669;box-shadow:0 4px 12px rgba(16,185,129,0.3)}
+        .small{font-size:13px;color:var(--muted)}
+        #debtHealth{background:linear-gradient(180deg,#fbfcfd,#fafbff);padding:14px;border-radius:10px;border-left:4px solid var(--accent);margin-top:8px!important;line-height:1.6;font-size:13px}
+        #debtHealth div{margin:6px 0;color:#374151}
+        #debtHealth strong{font-weight:700;color:#1f2937}
+        #debtHealth > div:first-child{border-bottom:1px solid rgba(79,70,229,0.1);padding-bottom:8px;margin-bottom:8px}
+        #debtHealth .on-track{background:var(--on-track-light);border-left:4px solid var(--success);padding:10px;border-radius:6px;color:#047857;margin-top:8px;font-weight:500}
+        #debtHealth .at-risk{background:var(--at-risk-light);border-left:4px solid var(--warning);padding:10px;border-radius:6px;color:#b45309;margin-top:8px;font-weight:500}
+        #result pre{background:linear-gradient(180deg, #f0fdf4, #dbeafe);padding:14px;border-radius:8px;border-left:4px solid var(--accent);overflow:auto;box-shadow:0 4px 12px rgba(5,150,105,0.08)}
+        #expensesChart{max-width:100%;height:320px;border-radius:12px;background:linear-gradient(180deg, #ffffff, #f0fdf4);box-shadow:0 8px 24px rgba(5,150,105,0.15);padding:8px;border:1px solid rgba(5,150,105,0.1)}
+        .debt-row input{width:140px}
+        @media(min-width:900px){
+            #planningForm{grid-template-columns:1fr 420px}
+            #planningForm > section{grid-column:1/span 1}
+            #expensesChart{height:360px}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>$PENDLESS</h1>
+
+        <form id="planningForm" style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+                <label>Monthly Income:
+                    <input id="income" type="number" min="0" step="0.01" style="margin-left:6px;width:160px;padding:6px;border-radius:4px;border:1px solid #ccc;" />
+                </label>
+            </div>
+
+            <section id="debtsSection">
+                <h3 style="margin:6px 0">Debts</h3>
+                <div id="debtsList" style="display:flex;flex-direction:column;gap:8px"></div>
+                <div style="display:flex;gap:8px;">
+                    <button id="addDebt" type="button" class="primary">Add Debt</button>
+                    <small class="small" style="align-self:center">Add each monthly debt payment</small>
+                </div>
+                <div id="debtHealth" class="small" style="margin-top:8px;padding-top:8px;border-top:1px dashed rgba(15,23,42,0.04);"></div>
+            </section>
+
+            <section>
+                <h3 style="margin:6px 0">Essentials</h3>
+                <div id="essentials" style="display:grid;grid-template-columns:1fr 120px;gap:8px;align-items:center">
+                    <!-- essentials will be populated by JS -->
+                </div>
+            </section>
+
+            <section>
+                <h3 style="margin:6px 0">Goal</h3>
+                <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+                    <select id="goalSelect">
+                        <option value="1">1 - Save money</option>
+                        <option value="2">2 - Spend on wants</option>
+                        <option value="3">3 - Save and spend</option>
+                        <option value="4">4 - Pay off more debt</option>
+                    </select>
+                    <label style="font-size:14px">On track with debt?
+                        <select id="onTrack"><option value="y">y</option><option value="n">n</option></select>
+                    </label>
+                </div>
+
+                <div id="extraDebtAllocations" style="margin-top:8px;display:none">
+                    <h4 style="margin:6px 0">Extra Debt Allocations (for Goal 4)</h4>
+                    <div id="extraAllocInputs" style="display:flex;flex-direction:column;gap:6px"></div>
+                </div>
+            </section>
+
+            <section>
+                <h3 style="margin:6px 0">Wants (optional)</h3>
+                <div id="wants" style="display:grid;grid-template-columns:1fr 120px;gap:8px;align-items:center">
+                    <!-- wants fields populated by JS -->
+                </div>
+            </section>
+
+            <div class="controls">
+                <button id="calculate" type="button" class="positive">Calculate & Show Chart</button>
+                <button id="reset" type="button" class="secondary">Reset</button>
+            </div>
+        </form>
+
+        <div id="result" style="margin-top:16px;display:none">
+            <h3>Summary</h3>
+            <pre id="summary" style="background:#f7f7f7;padding:12px;border-radius:6px;white-space:pre-wrap;"></pre>
+        </div>
+
+        <canvas id="expensesChart" style="margin-top:16px;display:none"></canvas>
+    </div>
+
+    <script>
+        // Multi-step wizard implementing the Python logic from the prompt
+        const steps = [];
+        let state = {
+            income: 0,
+            debts: [],
+            essentials_allocations: [],
+            leftover_after_essentials: 0,
+            goal: 1,
+            on_track: 'n',
+            extra_allocations: [],
+            recommended: 0,
+            savings: 0,
+            money_leftover: 0,
+            wants_allocations: {},
+        };
+
+        const goal_allocations = {1: 0.8, 2: 0.3, 3: 0.5, 4: 0.7};
+
+        // utility helpers
+        function $(id) { return document.getElementById(id); }
+
+        // populate dynamic sections
+        const essentialsCategories = ["Rent", "Food", "Utilities", "Transportation", "Internet", "Insurance", "Other Essentials"];
+        const wantsCategories = ["Entertainment", "Dining Out", "Shopping", "Travel"];
+
+        function createEssentialsFields() {
+            const container = $('essentials');
+            container.innerHTML = '';
+            essentialsCategories.forEach((cat, idx) => {
+                const leftDiv = document.createElement('div');
+                const label = document.createElement('label');
+                label.textContent = `Do you want to allocate money to ${cat}? (enter amount if yes)`;
+                label.style.fontSize = '14px';
+                leftDiv.appendChild(label);
+
+                const rightDiv = document.createElement('div');
+                const amt = document.createElement('input');
+                amt.type = 'number'; amt.min = 0; amt.step = '0.01'; amt.placeholder = '$ amount (leave empty for no)';
+                amt.style.width = '110px'; amt.style.marginLeft = '8px';
+                amt.dataset.idx = idx;
+                rightDiv.appendChild(amt);
+
+                container.appendChild(leftDiv);
+                container.appendChild(rightDiv);
+            });
+        }
+
+        function createWantsFields() {
+            const container = $('wants');
+            container.innerHTML = '';
+            wantsCategories.forEach((cat, idx) => {
+                const label = document.createElement('label');
+                label.textContent = `Do you want to spend money on ${cat}? (enter amount if yes)`;
+                label.style.fontSize = '14px';
+
+                const amt = document.createElement('input');
+                amt.type = 'number'; amt.min = 0; amt.step = '0.01'; amt.placeholder = '$ amount (leave empty for no)'; amt.style.width = '110px'; amt.style.marginLeft = '8px';
+                amt.dataset.idx = idx;
+
+                container.appendChild(label);
+                container.appendChild(amt);
+            });
+        }
+
+        // Debts management: user is asked "Do you have any monthly debt payments? (y/n):"
+        function showDebtsStep() {
+            const debtsList = $('debtsList');
+            debtsList.innerHTML = '';
+
+            const question = document.createElement('div');
+            question.textContent = 'Enter your monthly debt payments (leave count 0 if none):';
+            debtsList.appendChild(question);
+
+            const numDiv = document.createElement('div');
+            numDiv.style.marginTop = '8px';
+            const numLabel = document.createElement('label');
+            numLabel.textContent = 'How many debts do you have? ';
+            const numInput = document.createElement('input');
+            numInput.type = 'number'; numInput.min = 0; numInput.value = 0; numInput.style.width = '80px'; numInput.style.marginLeft = '8px';
+            numInput.id = 'debtsCount';
+            numDiv.appendChild(numLabel);
+            numDiv.appendChild(numInput);
+            debtsList.appendChild(numDiv);
+
+            const createBtn = document.createElement('button');
+            createBtn.type = 'button';
+            createBtn.textContent = 'Create Debt Entries';
+            createBtn.className = 'primary';
+            createBtn.style.marginTop = '8px';
+            debtsList.appendChild(createBtn);
+
+            const entriesDiv = document.createElement('div');
+            entriesDiv.style.display = 'flex'; entriesDiv.style.flexDirection = 'column'; entriesDiv.style.gap = '8px'; entriesDiv.style.marginTop = '8px';
+            debtsList.appendChild(entriesDiv);
+
+            createBtn.addEventListener('click', () => {
+                entriesDiv.innerHTML = '';
+                const count = parseInt(numInput.value) || 0;
+                for (let i = 1; i <= count; i++) {
+                    const box = document.createElement('div');
+                    box.className = 'debt-row';
+                    box.style.display = 'flex'; box.style.gap = '8px'; box.style.alignItems = 'center';
+                    const name = document.createElement('input'); name.placeholder = `Debt ${i} name`; name.style.width = '160px';
+                    const monthly = document.createElement('input'); monthly.type = 'number'; monthly.placeholder = 'monthly payment'; monthly.min = 0; monthly.step = '0.01'; monthly.style.width = '140px';
+                    const total = document.createElement('input'); total.type = 'number'; total.placeholder = 'total debt amount'; total.min = 0; total.step = '0.01'; total.style.width = '160px';
+                    const payoff = document.createElement('span'); payoff.style.marginLeft = '8px'; payoff.style.color = '#555';
+
+                    const updatePayoff = () => {
+                        const m = parseFloat(monthly.value) || 0;
+                        const t = parseFloat(total.value) || 0;
+                        const months = m > 0 ? (t / m) : Infinity;
+                        payoff.textContent = isFinite(months) ? `Estimated payoff time: ${Math.round(months*10)/10} months` : 'Estimated payoff time: ∞';
+                    };
+
+                    monthly.addEventListener('input', updatePayoff);
+                    total.addEventListener('input', updatePayoff);
+
+                    box.appendChild(name); box.appendChild(monthly); box.appendChild(total); box.appendChild(payoff);
+                    entriesDiv.appendChild(box);
+                }
+            });
+
+            // controls enabled by default (user inputs count)
+            numInput.disabled = false; createBtn.disabled = false;
+        }
+
+        // wizard navigation
+        function showSection(id) {
+            document.querySelectorAll('#planningForm > section, #planningForm > div, #planningForm > h3').forEach(n => n.style.display = 'none');
+            // show the entire form (we control visibility inside)
+        }
+
+        // initialize fields
+        createEssentialsFields();
+        createWantsFields();
+        showDebtsStep();
+
+        // main calculation flow executed when user clicks Calculate & Show Chart
+        $('calculate').addEventListener('click', () => {
+            // 1. Income
+            const income = parseFloat($('income').value) || 0;
+            state.income = income;
+
+            // 2. Debts: read debtsList entries if user created them (count > 0)
+            state.debts = [];
+            const debtsListDiv = $('debtsList');
+            const countInput = debtsListDiv.querySelector('#debtsCount');
+            const countVal = countInput ? (parseInt(countInput.value) || 0) : 0;
+            if (countVal > 0) {
+                const allDivs = debtsListDiv.querySelectorAll('div');
+                const entriesDiv = allDivs[allDivs.length - 1];
+                if (entriesDiv) {
+                    const boxes2 = entriesDiv.children;
+                    for (const b of boxes2) {
+                        const ins = b.querySelectorAll('input');
+                        if (ins.length >= 3) {
+                            const name = ins[0].value || 'Debt';
+                            const monthly_payment = parseFloat(ins[1].value) || 0;
+                            const total_amount = parseFloat(ins[2].value) || 0;
+                            state.debts.push({name, monthly_payment, total_amount});
+                        }
+                    }
+                }
+            }
+
+            function total_monthly_debt(debts) { return debts.reduce((s,d)=>s+(d.monthly_payment||0),0); }
+            const monthly_debt_total = total_monthly_debt(state.debts);
+            const income_after_debt = income - monthly_debt_total;
+
+            // Debt health analysis: per-debt payoff months and overall suggestion
+            const debtHealthEl = $('debtHealth');
+            let debtHealthHtml = '';
+            if (state.debts.length === 0) {
+                debtHealthHtml = '<div style="color:#9ca3af;font-style:italic;">No debts detected. Great job! 🎉</div>';
+            } else {
+                let weightedSum = 0, totalAmount = 0;
+                state.debts.forEach(d => {
+                    const m = d.monthly_payment || 0;
+                    const t = d.total_amount || 0;
+                    const months = m > 0 ? (t / m) : Infinity;
+                    debtHealthHtml += `<div><strong>${d.name}</strong>: monthly <strong style="color:var(--accent)">$${m.toFixed(2)}</strong>, total <strong>$${t.toFixed(2)}</strong> → payoff: <strong style="color:var(--muted)">${isFinite(months) ? (Math.round(months*10)/10) + 'mo' : '∞'}</strong></div>`;
+                    if (isFinite(months)) { weightedSum += months * t; totalAmount += t; }
+                });
+                const weightedAvgMonths = totalAmount ? (weightedSum / totalAmount) : Infinity;
+                debtHealthHtml += `<div>Total monthly payments: <strong style="color:var(--accent)">$${monthly_debt_total.toFixed(2)}</strong></div>`;
+                debtHealthHtml += `<div>Weighted payoff time: <strong style="color:var(--accent)">${isFinite(weightedAvgMonths) ? (Math.round(weightedAvgMonths*10)/10) + ' months' : '∞'}</strong></div>`;
+
+                // heuristics for being 'on track'
+                const onTrackByPaymentRatio = income > 0 ? (monthly_debt_total <= income * 0.25) : false;
+                const onTrackByDuration = isFinite(weightedAvgMonths) ? (weightedAvgMonths <= 36) : false;
+                const suggestedOnTrack = onTrackByPaymentRatio || onTrackByDuration;
+
+                if (suggestedOnTrack) {
+                    debtHealthHtml += `<div class="on-track">✓ <strong>You're on track!</strong> Payments are manageable and payoff is within ~3 years. Keep it up!</div>`;
+                } else {
+                    debtHealthHtml += `<div class="at-risk">⚠ <strong>Action needed:</strong> Consider increasing payments, prioritizing high-interest debt, or exploring refinancing to accelerate payoff.</div>`;
+                }
+            }
+            if (debtHealthEl) debtHealthEl.innerHTML = debtHealthHtml;
+
+            // 3. Essentials: read allocations
+            const essentialsContainer = $('essentials');
+            let essentials_allocations = [];
+            for (let i=0;i<essentialsCategories.length;i++) {
+                const amtInput = essentialsContainer.querySelector(`input[data-idx="${i}"]`);
+                const amount = amtInput ? (parseFloat(amtInput.value) || 0) : 0;
+                essentials_allocations.push(amount);
+            }
+            state.essentials_allocations = essentials_allocations;
+
+            let leftover = income_after_debt - essentials_allocations.reduce((a,b)=>a+b,0);
+            state.leftover_after_essentials = leftover;
+
+            // 4. Goal
+            const goal = parseInt($('goalSelect').value) || 1;
+            state.goal = goal;
+            const on_track = $('onTrack').value || 'n';
+            state.on_track = on_track;
+
+            // If goal == 4 and there are debts, perform extra debt allocation
+            let extra_allocations = [];
+            let recommended = 0;
+            let savings = 0;
+            let money_leftover = leftover;
+
+            if (goal === 4 && state.debts.length > 0) {
+                // read extra allocations inputs if present
+                const extraAllocInputs = $('extraAllocInputs');
+                extra_allocations = [];
+                if (extraAllocInputs) {
+                    const inputs = extraAllocInputs.querySelectorAll('input');
+                    for (let i=0;i<inputs.length;i++) {
+                        extra_allocations.push(parseFloat(inputs[i].value) || 0);
+                    }
+                }
+                recommended = extra_allocations.reduce((a,b)=>a+b,0);
+                money_leftover = leftover - recommended;
+                if (money_leftover < 0) {
+                    // adjust proportionally
+                    const factor = leftover / recommended;
+                    for (let i=0;i<extra_allocations.length;i++) extra_allocations[i] = Math.round(extra_allocations[i]*factor*100)/100;
+                    recommended = extra_allocations.reduce((a,b)=>a+b,0);
+                    money_leftover = 0;
+                }
+            } else {
+                // allocate based on goal allocations
+                recommended = leftover * (goal_allocations[goal] || 0);
+                if (goal === 4 && on_track.toLowerCase() === 'y' && (leftover - recommended) > 0) {
+                    savings = leftover - recommended;
+                    money_leftover = 0;
+                } else {
+                    money_leftover = leftover - recommended;
+                }
+            }
+
+            state.extra_allocations = extra_allocations;
+            state.recommended = Math.round(recommended*100)/100;
+            state.savings = Math.round(savings*100)/100;
+            state.money_leftover = Math.round(money_leftover*100)/100;
+
+            // 6. Wants
+            let wants_allocations = {};
+            if (state.money_leftover > 0) {
+                // read wants fields
+                const wantsContainer = $('wants');
+                const labels = wantsContainer.querySelectorAll('label');
+                const inputs = wantsContainer.querySelectorAll('input');
+                let totalWants = 0;
+                for (let i=0;i<wantsCategories.length;i++) {
+                        const amountInput = wantsContainer.querySelector(`input[data-idx="${i}"]`);
+                        const amount = amountInput ? (parseFloat(amountInput.value) || 0) : 0;
+                    wants_allocations[wantsCategories[i]] = amount;
+                    totalWants += amount;
+                }
+                if (totalWants > state.money_leftover) {
+                    // adjust proportionally
+                    const factor = state.money_leftover / totalWants;
+                    for (const k of Object.keys(wants_allocations)) {
+                        wants_allocations[k] = Math.round(wants_allocations[k]*factor*100)/100;
+                    }
+                    totalWants = state.money_leftover;
+                }
+                state.wants_allocations = wants_allocations;
+                state.money_leftover = Math.round((state.money_leftover - totalWants)*100)/100;
+            }
+
+            // prepare summary text matching the original prints
+            let summary = '';
+            summary += `Income: $${income}\n`;
+            summary += `Monthly debt payments total: $${monthly_debt_total}\n`;
+            summary += `Income after debt: $${Math.round(income_after_debt*100)/100}\n`;
+            summary += `\nEssentials allocations:\n`;
+            essentialsCategories.forEach((c,i) => { summary += `${c}: $${essentials_allocations[i]}\n`; });
+            summary += `\nMoney left after essentials and debt: $${Math.round(leftover*100)/100}\n`;
+
+            if (state.goal === 4 && state.debts.length > 0) {
+                summary += `\nExtra debt payment allocations:\n`;
+                for (let i=0;i<state.debts.length;i++) {
+                    summary += `${state.debts[i].name}: $${state.extra_allocations[i] || 0}\n`;
+                }
+                summary += `Total extra toward debt: $${state.extra_allocations.reduce((a,b)=>a+b,0)}\n`;
+            } else {
+                summary += `\nMonthly amount toward goal: $${state.recommended}\n`;
+            }
+            if (state.savings > 0) summary += `Automatically saved: $${state.savings}\n`;
+            summary += `Money remaining after goal: $${state.money_leftover}\n`;
+
+            if (Object.keys(state.wants_allocations).length > 0) {
+                summary += `\nYour wants allocations:\n`;
+                for (const k in state.wants_allocations) summary += `${k}: $${state.wants_allocations[k]}\n`;
+            }
+
+            $('summary').textContent = summary;
+            $('result').style.display = 'block';
+
+            // show chart: Money Spent vs Money Leftover (using income as budget)
+            const final_leftover = state.money_leftover;
+            const spent = Math.round((income - final_leftover)*100)/100;
+
+            $('expensesChart').style.display = 'block';
+            const ctx = document.getElementById('expensesChart').getContext('2d');
+            if (window.finalChart) window.finalChart.destroy();
+            window.finalChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Money Spent', 'Money Leftover'],
+                    datasets: [{ data: [spent, final_leftover], backgroundColor: ['#ff4d4d', '#4CAF50'], borderColor: '#fff', borderWidth: 1 }]
+                },
+                options: { responsive: true, plugins: { legend: { position: 'top' }, title: { display: true, text: `Budget Breakdown (Budget: $${income})` } } }
+            });
+        });
+
+        // show/hide extraAllocInputs when goal select changes
+        $('goalSelect').addEventListener('change', () => {
+            const g = parseInt($('goalSelect').value);
+            const extraDiv = $('extraDebtAllocations');
+            const extraInputs = $('extraAllocInputs');
+            if (g === 4) {
+                extraDiv.style.display = 'block';
+                // populate inputs for each debt
+                extraInputs.innerHTML = '';
+                state.debts.forEach(d => {
+                    const row = document.createElement('div');
+                    row.style.display = 'flex'; row.style.gap = '8px'; row.style.alignItems = 'center';
+                    const label = document.createElement('label'); label.textContent = `How much extra to pay toward ${d.name} (max): `;
+                    const inp = document.createElement('input'); inp.type = 'number'; inp.min = 0; inp.step = '0.01'; inp.style.width = '140px';
+                    row.appendChild(label); row.appendChild(inp);
+                    extraInputs.appendChild(row);
+                });
+            } else {
+                extraDiv.style.display = 'none';
+                extraInputs.innerHTML = '';
+            }
+        });
+
+        // Reset button
+        $('reset').addEventListener('click', () => { location.reload(); });
+    </script>
+</body>
+</html>

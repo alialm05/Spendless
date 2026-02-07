@@ -1,0 +1,101 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  color: #1f2933;
+  background: #ffffff;
+  line-height: 1.6;
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: white;
+  text-align: center;
+  padding: 90px 20px;
+}
+
+.hero h1 {
+  font-size: 3rem;
+}
+
+.hero p {
+  max-width: 600px;
+  margin: 20px auto;
+  font-size: 1.2rem;
+}
+
+.btn-primary {
+  display: inline-block;
+  background: white;
+  color: #16a34a;
+  padding: 14px 28px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* How it works */
+.how-it-works {
+  padding: 70px 20px;
+  text-align: center;
+}
+
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+
+.step {
+  max-width: 260px;
+}
+
+/* Features */
+.features {
+  background: #f9fafb;
+  padding: 70px 20px;
+  text-align: center;
+}
+
+.features ul {
+  list-style: none;
+  max-width: 400px;
+  margin: 30px auto 0;
+}
+
+.features li {
+  padding: 10px 0;
+  font-size: 1.1rem;
+}
+
+/* CTA */
+.cta {
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.cta button {
+  margin-top: 20px;
+  padding: 14px 30px;
+  font-size: 1rem;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Footer */
+footer {
+  background: #111827;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
