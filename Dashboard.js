@@ -14,7 +14,13 @@ overlay.innerHTML = `
 
 document.body.appendChild(overlay);
 
-// 3. Initialize the Chart
+// 3. Add close button logic first (before chart initialization)
+document.getElementById('closeOverlay').addEventListener('click', () => {
+    console.log('Overlay closed by user');
+    overlay.remove();
+});
+
+// 4. Initialize the Chart
 const ctx = document.getElementById('budgetChart').getContext('2d');
 new Chart(ctx, {
     type: 'pie',
@@ -30,10 +36,4 @@ new Chart(ctx, {
             title: { display: true, text: 'Monthly Budget Projection' }
         }
     }
-});
-
-// 4. Close button logic
-document.getElementById('closeOverlay').addEventListener('click', () => {
-    console.log('Overlay closed by user');
-  overlay.remove();
 });
