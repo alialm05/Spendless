@@ -6,13 +6,13 @@
    "content_scripts": [
     {
         "matches": ["https://www.amazon.com/checkout*", "https://www.ebay.com/*"],
-        "js": ["chart.js", "Dashboard.js"]
+        "js": ["utils.js", "chart.js", "Dashboard.js"]
     }
     ],
 
     "web_accessible_resources": [
     {
-        "resources": ["https://cdn.jsdelivr.net/npm/chart.js", "chart.js", "Dashboard.js"],
+        "resources": ["utils.js", "chart.js", "Dashboard.js"],
         "matches": ["https://www.amazon.com/*", "https://www.ebay.com/*"]
     }
 ],

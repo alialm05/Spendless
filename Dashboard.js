@@ -2,7 +2,10 @@
 const overlay = document.createElement('div');
 overlay.style.cssText = "position:fixed; top:10%; right:10%; width:400px; z-index:9999; background:white; border:2px solid #333; padding:20px; box-shadow: 10px 10px 0px #000;";
 
-var budget = 200;
+// Remove require - utils.js functions are now available globally
+// Make sure utils.js is loaded before this script
+
+const budget = 1000;
 
 function getPriceAmazon(){
     const grandTotal = document.querySelector('.grand-total-cell');
@@ -33,10 +36,10 @@ function getPriceAmazon(){
     });*/
     
     if (priceElement) {
-        console.log('Price element found:', priceElement);
-        console.log('Price text:', priceElement.innerText);
+        //console.log('Price element found:', priceElement);
+        //console.log('Price text:', priceElement.innerText);
         const price = parseFloat(priceElement.innerText.replace(/[^0-9.-]+/g,""));
-        console.log('Parsed price:', price);
+        //console.log('Parsed price:', price);
         return price;
     }
     
@@ -50,6 +53,7 @@ overlay.innerHTML = `
     <h2 style="margin-top:0">Monthly Budget Impact</h2>
     <p>This purchase represents a new slice in your monthly spending.</p>
     <h1 id="overlayTitle"></h1>
+    <h2 id="budgetStatus"></h2>
     <canvas id="budgetChart" width="200" height="200"></canvas>
     <button id="closeOverlay" style="margin-top:10px">I understand, let me shop</button>
 `;
@@ -72,6 +76,15 @@ function init() {
         //showBudgetImpact(totalAmount);
         const overlayTitle = document.getElementById('overlayTitle');
         overlayTitle.appendChild(document.createTextNode(`You are spending $${totalAmount.toFixed(2)}.`)); 
+
+        const pUsed = calculateBudgetRisk(budget, totalAmount);
+        const riskText = document.getElementById('budgetStatus');
+
+        const riskU = getRiskLevel(pUsed);
+
+        riskText.appendChild(document.createTextNode(`Risk Level: ${riskU.level}`));
+        riskText.style.color = riskU.color;
+
     }
 }
 
