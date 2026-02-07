@@ -2,6 +2,8 @@
 const overlay = document.createElement('div');
 overlay.style.cssText = "position:fixed; top:10%; right:10%; width:400px; z-index:9999; background:white; border:2px solid #333; padding:20px; box-shadow: 10px 10px 0px #000;";
 
+var budget = 200;
+
 // 2. Add a Title and the Canvas
 overlay.innerHTML = `
     <h2 style="margin-top:0">Monthly Budget Impact</h2>
@@ -31,4 +33,7 @@ new Chart(ctx, {
 });
 
 // 4. Close button logic
-document.getElementById('closeOverlay').onclick = () => overlay.remove();
+document.getElementById('closeOverlay').addEventListener('click', () => {
+    console.log('Overlay closed by user');
+  overlay.remove();
+});

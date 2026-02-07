@@ -5,14 +5,14 @@
   "manifest_version": 3,
    "content_scripts": [
     {
-        "matches": ["https://www.amazon.com/*", "https://www.ebay.com/*"],
+        "matches": ["https://www.amazon.com/checkout*", "https://www.ebay.com/*"],
         "js": ["chart.js", "Dashboard.js"]
     }
     ],
 
     "web_accessible_resources": [
     {
-        "resources": ["chart.js", "Dashboard.js"],
+        "resources": ["https://cdn.jsdelivr.net/npm/chart.js", "chart.js", "Dashboard.js"],
         "matches": ["https://www.amazon.com/*", "https://www.ebay.com/*"]
     }
 ],

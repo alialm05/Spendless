@@ -22,5 +22,3 @@ function renderReadingTime(article) {
 
   (date ?? heading).insertAdjacentElement("afterend", badge);
 }
-
-renderReadingTime(document.querySelector("article"));
