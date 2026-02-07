@@ -1,45 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Monthly Budget Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .chart-container {
-            width: 200px;
+            width: 400px;
             margin: 0 auto;
             font-family: sans-serif;
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js"></script>   
 </head>
 <body>
 
-    <div>
-        <h1>Budget Dashboard</h1>
-
-    <div style="width: 500px; height: 500px">
+    <div class="chart-container">
         <canvas id="budgetChart"></canvas>
     </div>
 
     <script>
         const ctx = document.getElementById('budgetChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'pie',
+        
+        const myBudgetChart = new Chart(ctx, {
+            type: 'pie', // Specify the chart type
             data: {
-                labels: ['Rent', 'Food', 'Savings', 'THIS PURCHASE'],
+                labels: ['Rent', 'Food', 'Utilities', 'Entertainment', 'Savings'],
                 datasets: [{
-                    data: [1200, 400, 500, 150], // You'll replace 150 with your scraped price!
-                    backgroundColor: ['#eee', '#ccc', '#aaa', '#FF0000'] // Red for the new purchase!
+                    label: 'Monthly Expenses',
+                    data: [1200, 400, 150, 200, 500], // Default Input Values
+                    backgroundColor: [
+                        '#FF6384', // Red
+                        '#36A2EB', // Blue
+                        '#FFCE56', // Yellow
+                        '#4BC0C0', // Green
+                        '#9966FF'  // Purple
+                    ],
+                    hoverOffset: 4
                 }]
             },
             options: {
                 plugins: {
-                    title: { display: true, text: 'Monthly Budget Projection' }
+                    title: {
+                        display: true,
+                        text: 'Monthly Budget', // Your Title
+                        font: {
+                            size: 20
+                        }
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
                 }
             }
         });
     </script>
-
-    </div>
-
-
 </body>
 </html>
