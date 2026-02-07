@@ -56,6 +56,7 @@ overlay.innerHTML = `
     <h2 id="budgetStatus"></h2>
     <canvas id="budgetChart" width="200" height="200"></canvas>
     <button id="closeOverlay" style="margin-top:10px">I understand, let me shop</button>
+    <audio id="my-audio" src="./resources/siren.mp3"></audio>
 `;
 
 document.body.appendChild(overlay);
@@ -66,7 +67,7 @@ document.getElementById('closeOverlay').addEventListener('click', () => {
     overlay.remove();
 });
 
-// content.js
+// Initialize Popup
 function init() {
     const totalAmount = getPriceAmazon();
     
@@ -84,9 +85,14 @@ function init() {
 
         riskText.appendChild(document.createTextNode(`Risk Level: ${riskU.level}`));
         riskText.style.color = riskU.color;
+        const audio = document.getElementById("my-audio");
+        audio.play().catch((error) => {
+            console.error("Audio playback failed:", error);
+        });
 
     }
 }
+
 
 // Run 2 seconds after load to ensure Amazon's dynamic prices have appeared
 setTimeout(init, 1000);

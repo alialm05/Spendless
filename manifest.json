@@ -20,7 +20,7 @@
 
     "web_accessible_resources": [
     {
-        "resources": ["utils.js", "chart.js", "Dashboard.js"],
+        "resources": ["utils.js", "chart.js", "Dashboard.js", "./resources/siren.mp3"],
         "matches": ["https://www.amazon.com/*", "https://www.ebay.com/*"]
     }
     ],
