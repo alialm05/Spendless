@@ -3,6 +3,14 @@
   "description": "Track your mindfulness journey",
   "version": "1.01",
   "manifest_version": 3,
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "storage",
+    "contextMenus",
+    "tabs"
+  ],
    "content_scripts": [
     {
         "matches": ["https://www.amazon.com/checkout*", "https://www.ebay.com/*"],
@@ -15,9 +23,12 @@
         "resources": ["utils.js", "chart.js", "Dashboard.js"],
         "matches": ["https://www.amazon.com/*", "https://www.ebay.com/*"]
     }
-],
+    ],
   "action": {
-    "default_popup": "popper.html",
     "default_icon": "icon.png"
-  }
+  },
+    "options_ui": {
+    "page": "home.html",
+    "open_in_tab": true
+  }   
 }
