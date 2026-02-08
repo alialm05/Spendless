@@ -14,6 +14,20 @@ let state = {
     wants_allocations: {},
 };
 
+function saveStateExtensionData(value) {
+    chrome.storage.local.set({ data : value }).then()
+}
+
+function loadStateExtensionData(key) {
+    chrome.storage.local.get([key]).then((result) => {
+       return result; 
+    });
+}
+
+function resetStateExtensionData() {
+    saveStateExtensionData(0);
+}
+
 const goal_allocations = {1: 0.8, 2: 0.3, 3: 0.5, 4: 0.7};
 
 // utility helpers
@@ -233,6 +247,7 @@ function showSection(id) {
     document.querySelectorAll('#planningForm > section, #planningForm > div, #planningForm > h3').forEach(n => n.style.display = 'none');
     // show the entire form (we control visibility inside)
 }
+
 
 // initialize fields
 createEssentialsFields();
@@ -757,6 +772,8 @@ $('calculate').addEventListener('click', () => {
             }
         }
     });
+
+    saveStateExtensionData(money_leftover);
 });
 
 // Handle goal button clicks
@@ -812,4 +829,7 @@ document.querySelectorAll('.goal-btn').forEach(btn => {
 });
 
 // Reset button
-$('reset').addEventListener('click', () => { location.reload(); });
+$('reset').addEventListener('click', () => {
+    resetStateExtensionData();
+    location.reload();
+});
