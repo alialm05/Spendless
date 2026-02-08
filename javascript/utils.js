@@ -1,18 +1,19 @@
 // Better approach: Define risk thresholds in ascending order
 class Threshold {
-    constructor(threshold, level, color, message) {
+    constructor(threshold, level, color, message, image) {
         this.threshold = threshold;
         this.level = level;
         this.color = color;
         this.message = message;
+        this.image = image;
     }
 }
 
 const riskThresholds = [
-    new Threshold(0, 'Low', '#4CAF50', 'Safe spending level'),
-    new Threshold(15, 'Medium', '#FFC107', 'Moderate spending - monitor closely'),
-    new Threshold(25, 'High', '#FF9800', 'High spending - consider reducing'),
-    new Threshold(40, 'Critical', '#F44336', 'Critical level - immediate action needed'),
+    new Threshold(0, 'Low', '#4CAF50', 'Safe spending level', "resources/yippe.gif"),
+    new Threshold(15, 'Medium', '#FFC107', 'Moderate spending - monitor closely', "resources/bucktooth.gif"),
+    new Threshold(25, 'High', '#FF9800', 'High spending - consider reducing', "resources/critical.gif"),
+    new Threshold(40, 'Critical', '#F44336', 'Critical level - immediate action needed', "resources/skull.png"),
 ];
 
 
@@ -27,7 +28,7 @@ function getRiskLevel(percentage) {
             break;
         }
     }
-    return { threshold: currThreshold.threshold, level: currThreshold.level, color: currThreshold.color, message: currThreshold.message };
+    return currThreshold;
 }
 
 function calculateBudgetRisk(currentBudget, spendingAmount) {

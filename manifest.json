@@ -6,6 +6,11 @@
   "background": {
     "service_worker": "background.js"
   },
+  "icons": {
+    "16": "resources/icon.png",
+    "48": "resources/icon.png",
+    "128": "resources/icon.png"
+  },
   "permissions": [
     "storage",
     "contextMenus",

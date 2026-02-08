@@ -1,17 +1,14 @@
 //import "./chart.js"
+const BUDGET = 300;
+const overlayHolder = document.createElement('div');
+overlayHolder.style.all = "initial";
+document.body.appendChild(overlayHolder);
+
 const overlay = document.createElement('div');
-//overlay.style.cssText = `position:fixed; top:10%; right:10%; width:400px; z-index:9999; background:white;  border:2px solid #333; padding:20px; box-shadow: 10px 10px 0px #000;`;
 overlay.className = "budgetOverlay";
 
-// Remove require - utils.js functions are now available globally
-// Make sure utils.js is loaded before this script
-
-const BUDGET = 300;
-
-
-// 2. Add a Title and the Canvas
 overlay.innerHTML = `
-    <h2 style="margin-top:0">Monthly Budget Impact</h2>
+    <h1 style="margin-top:0">Monthly Budget Impact</h2>
     <p>This purchase represents a new slice in your monthly spending.</p>
     <h1 id="overlayTitle"></h1>
     <h2 id="budgetStatus"></h2>
@@ -19,7 +16,7 @@ overlay.innerHTML = `
     <button id="closeOverlay" data-risk="" style="display:none">I understand, let me shop</button>
 `;
 
-document.body.appendChild(overlay);
+overlayHolder.appendChild(overlay);
 
 // 3. Add close button logic first (before chart initialization)
 document.getElementById('closeOverlay').addEventListener('click', (e) => {
@@ -43,8 +40,8 @@ function createChart(purchase, moneyLeft){
         data: {
             labels: ['Budget', 'THIS PURCHASE'],
             datasets: [{
-                data: [moneyLeft, purchase], // You'll replace 150 with your scraped price!
-                backgroundColor: ['#02c282', '#FF0000'] // Green for the budget, Red for the new purchase!
+                data: [moneyLeft, purchase], 
+                backgroundColor: ['#02c282', '#FF0000']
             }]
         },
         options: {
@@ -72,26 +69,27 @@ function init() {
         const pUsed = calculateBudgetRisk(BUDGET, totalAmount);
         const riskText = document.getElementById('budgetStatus');
 
-        const riskU = getRiskLevel(pUsed);
+        const threshold = getRiskLevel(pUsed);
 
-        createChart(BUDGET - totalAmount, totalAmount);
+        createChart(Math.max(1, BUDGET - totalAmount), totalAmount);
 
         // image/gif
         const image = document.createElement('img');
-        image.src = chrome.runtime.getURL(`resources/200.gif`);
+        console.log('Displaying image for risk level:', threshold.image);
+        image.src = chrome.runtime.getURL(threshold.image);
         image.style.width = '100px';
         image.style.height = '100px';
         overlay.appendChild(image);
 
         closeOverlay = document.getElementById('closeOverlay');
         closeOverlay.style.display = 'block';
-        closeOverlay.dataset.risk = riskU.threshold;
+        closeOverlay.dataset.risk = threshold.threshold;
 
 
         overlay.appendChild(closeOverlay);
 
-        riskText.appendChild(document.createTextNode(`Risk Level: ${riskU.level}`));
-        riskText.style.color = riskU.color;
+        riskText.appendChild(document.createTextNode(`Risk Level: ${threshold.level}`));
+        riskText.style.color = threshold.color;
 
     }
 }

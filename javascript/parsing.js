@@ -40,21 +40,20 @@ function getPriceAmazon(){
 }
 
 function findPriceBySymbol() {
-    // 1. Get all elements that might contain text
+    console.log('Attempting to find price by symbol...');
     const elements = document.querySelectorAll('span, div, b, strong, td');
     let highestPrice = 0;
 
     for (const el of elements) {
         const text = el.innerText.trim();
 
-        // 2. Check if the text contains '$' and a number
+        // check if text contains '$' and a number
         if (text.includes('$') && /\d/.test(text)) {
-            // Clean the string (e.g., "$1,250.00 USD" -> "1250.00")
+            // clean the string 
             //console.log('Found potential price text:', text);
             const cleanText = text.replace(/[^0-9.]/g, '');
             const price = parseFloat(cleanText);
 
-            // 3. Logic: The "Total" is usually the largest price on a checkout page
             if (!isNaN(price) && price > highestPrice) {
                 console.log('New highest price found:', price);
                 console.log('From Clean text:', cleanText);
@@ -77,8 +76,8 @@ function findLargestPrice() {
             const price = parseFloat(text.replace(/[^0-9.]/g, ''));
             const style = window.getComputedStyle(el);
             const size = parseFloat(style.fontSize);
-
-            if (price > 0 && size > bestMatch.fontSize) {
+            if (price > 0 && size >= bestMatch.fontSize) {
+                //console.log(`Parsed price: ${price}, Font size: ${size}px`);
                 bestMatch = { price, fontSize: size };
             }
         }
@@ -87,6 +86,7 @@ function findLargestPrice() {
     if (bestMatch.price === 0) {
         return findPriceBySymbol() || 0; // Fallback to symbol-based search if no price found by size
     }
+    console.log(`Best match found: $${bestMatch.price} with font size ${bestMatch.fontSize}px`);
     return bestMatch.price;
 }
 
@@ -106,15 +106,15 @@ function findOrderTotal() {
         const element = document.querySelector(selector);
         if (element) {
             const text = element.innerText || element.textContent;
-            // Extract numbers and decimals only (e.g., "$126.00" -> 126.00)
+            // extract numbers
             const numericPrice = parseFloat(text.replace(/[^0-9.-]+/g, ""));
-            
+            console.log(`Trying selector "${selector}": found text "${text}", parsed price ${numericPrice}`);
             if (!isNaN(numericPrice) && numericPrice > 0) {
                 return numericPrice;
             }
         }
     }
-    console.log("finding price by symbol");
+    console.log("finding price by largest price");
     return findLargestPrice(); // fallback
 }
 
