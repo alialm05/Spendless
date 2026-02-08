@@ -21,7 +21,7 @@
           "https://pay.ebay.ca/*"
           ],
         "js": ["javascript/utils.js", "javascript/parsing.js", "chart.js", "content.js"],
-        "css": ["style.css"]
+        "css": ["css/style.css"]
     }
     ],
 
