@@ -175,6 +175,24 @@
             box-shadow: 0 0 0 3px rgba(5,150,105,0.1) !important;
             background: #ffffff !important;
         }
+        /* Essentials mirror wants styling for visual consistency */
+        .essentials-list {display:flex;flex-direction:column;gap:0;border-radius:8px;overflow:hidden;background:white}
+        .essentials-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 12px;
+            border-bottom: 1px solid rgba(5,150,105,0.06);
+            transition: background 0.2s, transform 220ms ease, opacity 220ms ease;
+            background: transparent;
+        }
+        .essentials-row:hover { background: rgba(16, 185, 129, 0.03); }
+        .essentials-row:last-child { border-bottom: none; border-radius: 0 0 8px 8px; }
+        .essentials-label { font-weight: 500; color: #1f2937; font-size: 14px; font-family: Inter, system-ui, sans-serif }
+        .amount-wrapper { display:flex;align-items:center;gap:8px }
+        .amount-wrapper span { font-weight:600;color:var(--accent);font-size:14px }
+        .amount-wrapper input { width:120px;padding:8px 10px;border-radius:6px;border:2px solid rgba(5,150,105,0.2);background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(240,253,250,0.95));font-size:14px;transition:all 0.18s }
+        .amount-wrapper input:focus { border-color:var(--accent);box-shadow:0 0 0 3px rgba(5,150,105,0.08);background:#fff }
         #wantsBudgetWarning {
             background: linear-gradient(135deg, #fef2f2, #fee2e2);
             color: #991b1b;
@@ -223,3 +241,19 @@
             #planningForm > section{grid-column:1/span 1}
             #expensesChart{height:360px}
         }
+
+        /* Progress bar / step indicator */
+        .progress-bar{margin:12px 0 0 0}
+        .progress-steps{display:flex;gap:8px;justify-content:space-between;margin-bottom:8px}
+        .progress-steps .step{flex:1;text-align:center;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.8);border:1px solid rgba(6,95,70,0.06);font-weight:600;color:#244;cursor:pointer;transition:all 250ms ease}
+        .progress-steps .step.active{background:linear-gradient(135deg,#065f46,#059669);color:#fff;box-shadow:0 6px 18px rgba(5,150,105,0.18);transform:translateY(-2px)}
+        .progress-line{height:6px;background:rgba(15,23,42,0.06);border-radius:6px;overflow:hidden}
+        .progress-fill{height:100%;background:linear-gradient(90deg,#34d399,#059669);width:0%;transition:width 350ms ease}
+
+        /* Section highlight + smooth transitions for dynamic changes */
+        section{transition:box-shadow 250ms ease, transform 240ms ease, background 240ms ease, border-color 240ms ease}
+        section.active{box-shadow:0 12px 30px rgba(5,150,105,0.12);transform:translateY(-4px);border-left-width:6px;background:linear-gradient(180deg, rgba(245,255,250,0.98), rgba(235,252,245,0.98))}
+
+        /* Smooth appearance for dynamically inserted rows */
+        .wants-row, .debt-row, .essentials-list > div{transition:opacity 240ms ease, transform 240ms ease}
+        .hidden {opacity:0;transform:translateY(6px);pointer-events:none}

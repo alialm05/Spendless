@@ -27,31 +27,35 @@ function createEssentialsFields() {
     const container = $('essentials');
     container.innerHTML = '';
     essentialsCategories.forEach((cat, idx) => {
-        const leftDiv = document.createElement('div');
-        const label = document.createElement('label');
-        label.textContent = `Do you want to allocate money to ${cat}? (enter amount if yes)`;
-        label.style.fontSize = '14px';
-        leftDiv.appendChild(label);
+        const row = document.createElement('div');
+        row.className = 'essentials-row';
 
-        const rightDiv = document.createElement('div');
-        rightDiv.style.display = 'flex';
-        rightDiv.style.alignItems = 'center';
-        rightDiv.style.gap = '4px';
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'essentials-label';
+        // Static category name (no question) — category label on the left
+        labelDiv.textContent = cat;
+        labelDiv.setAttribute('aria-label', cat);
+
+        const amountWrapper = document.createElement('div');
+        amountWrapper.className = 'amount-wrapper';
 
         const dollarSign = document.createElement('span');
         dollarSign.textContent = '$';
-        dollarSign.style.fontWeight = '600';
-        dollarSign.style.color = 'var(--accent)';
 
         const amt = document.createElement('input');
-        amt.type = 'number'; amt.min = 0; amt.step = '0.01'; amt.placeholder = 'amount';
-        amt.style.width = '100px'; amt.style.marginLeft = '0px';
+        amt.type = 'number'; amt.min = 0; amt.step = '0.01'; amt.placeholder = '0.00';
         amt.dataset.idx = idx;
-        rightDiv.appendChild(dollarSign);
-        rightDiv.appendChild(amt);
+        amt.value = '0.00';
+        // update realtime feedback when essentials change
+        amt.addEventListener('input', () => updateRealtimeFeedback());
 
-        container.appendChild(leftDiv);
-        container.appendChild(rightDiv);
+        amountWrapper.appendChild(dollarSign);
+        amountWrapper.appendChild(amt);
+
+        row.appendChild(labelDiv);
+        row.appendChild(amountWrapper);
+
+        container.appendChild(row);
     });
 }
 
@@ -238,6 +242,53 @@ function showSection(id) {
 createEssentialsFields();
 createWantsFields();
 showDebtsStep();
+
+// --- Step progress / active-section manager ---
+const stepIds = ['incomeSection','debtsSection','essentialsSection','goalSection','wantsSection','result'];
+function initStepProgress(){
+    const stepsEls = Array.from(document.querySelectorAll('#progressBar .step'));
+    // click on a step navigates / highlights
+    stepsEls.forEach((s,i)=> s.addEventListener('click', ()=> setActiveStep(i)));
+
+    // focus inside a section should highlight it
+    stepIds.forEach((id, idx) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('click', () => setActiveStep(idx));
+        const inputs = el.querySelectorAll('input,select,button,textarea');
+        inputs.forEach(inp => inp.addEventListener('focus', () => setActiveStep(idx)));
+    });
+
+    // initial state
+    setActiveStep(0);
+}
+
+function setActiveStep(index){
+    const stepsEls = Array.from(document.querySelectorAll('#progressBar .step'));
+    stepsEls.forEach((s,i)=> s.classList.toggle('active', i === index));
+    // update sections highlight
+    stepIds.forEach((id,i)=>{
+        const el = document.getElementById(id);
+        if(!el) return;
+        el.classList.toggle('active', i === index);
+        if(i === index){
+            try{ el.scrollIntoView({behavior:'smooth', block:'center'}); } catch(e){}
+        }
+    });
+    const fill = document.querySelector('#progressBar .progress-fill');
+    if(fill){
+        const pct = (index / Math.max(1, stepsElsLength()-1)) * 100;
+        fill.style.width = pct + '%';
+    }
+}
+
+function stepsElsLength(){ return document.querySelectorAll('#progressBar .step').length }
+
+// initialize the progress UI
+document.addEventListener('DOMContentLoaded', () => initStepProgress());
+// ensure initialization when script is executed at end of body
+try{ initStepProgress(); }catch(e){}
+
 
 // Real-time budget feedback
 function updateRealtimeFeedback() {
@@ -683,6 +734,7 @@ $('calculate').addEventListener('click', () => {
 
     $('summary').textContent = summary;
     $('result').style.display = 'block';
+    if (typeof setActiveStep === 'function') setActiveStep(stepIds.length - 1);
 
     // Calculate totals for breakdown chart
     const essentialsTotal = essentials_allocations.reduce((a,b)=>a+b,0);
