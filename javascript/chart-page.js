@@ -15,7 +15,7 @@ let state = {
 };
 
 function saveStateExtensionData(value) {
-    chrome.storage.local.set({ data : value }).then()
+    chrome.storage.local.set({ spendless_data : value }).then()
 }
 
 function loadStateExtensionData(key) {
@@ -371,6 +371,10 @@ formEl.addEventListener('input', (e) => {
 });
 
 // initialize fields
+
+function renderChart() {
+    // Chart rendering logic here
+}
 
 // main calculation flow executed when user clicks Calculate & Show Chart
 $('calculate').addEventListener('click', () => {
@@ -773,7 +777,7 @@ $('calculate').addEventListener('click', () => {
         }
     });
 
-    saveStateExtensionData(money_leftover);
+    saveStateExtensionData(state);
 });
 
 // Handle goal button clicks
