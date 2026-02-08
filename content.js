@@ -1,4 +1,4 @@
-//import "./chart.js"
+
 var BUDGET = 300;
 var BUDGET_LOADED = false
 const overlayHolder = document.createElement('div');
@@ -7,32 +7,26 @@ document.body.appendChild(overlayHolder);
 
 function loadBudgetInfo() {
     if (BUDGET_LOADED) {
-        return Promise.resolve(BUDGET); // Return current budget if already loaded
+        return Promise.resolve(BUDGET); // return current budget if already loaded
     }
     
-    console.log('Attempting to load budget data...');
-    
-    // First show what's in storage for debugging
     chrome.storage.local.get(null).then((allData) => {
         console.log('All data in storage:', allData);
     });
     
-    // Return the promise so it can be awaited
     return loadStateExtensionData('spendless_data').then((result) => {
         console.log('Raw storage result:', result);
         
-        // Chrome storage returns {spendless_data: actualValue}
         const data = result.spendless_data;
         
         if (data) {
             console.log('Found stored data:', data);
             
-            // Check if data is an object with money_leftover property
             if (typeof data === 'object' && data.money_leftover !== undefined) {
                 BUDGET = data.money_leftover;
                 console.log('Set BUDGET from money_leftover:', BUDGET);
             } else if (typeof data === 'number') {
-                // If data is just a number
+            
                 BUDGET = data;
                 console.log('Set BUDGET from number:', BUDGET);
             } else {
@@ -45,13 +39,13 @@ function loadBudgetInfo() {
             console.log('No data found for key: spendless_data');
             console.log('Using default budget:', BUDGET);
             BUDGET_LOADED = true;
-            return BUDGET; // Return default budget if nothing in storage
+            return BUDGET; // return default budget if nothing in storage
         }
     }).catch((error) => {
         console.error('Error loading budget data:', error);
         console.log('Using default budget due to error:', BUDGET);
         BUDGET_LOADED = true;
-        return BUDGET; // Return default budget on error
+        return BUDGET; 
     });
 }
 
@@ -82,7 +76,7 @@ function createOverlay() {
 
         const riskLevel = e.currentTarget.dataset.risk;
 
-        if (riskLevel < 25) return; // No sound for Low/Medium risk
+        if (riskLevel < 25) return; // no sound for Low/Medium risk
 
         const audioUrl = chrome.runtime.getURL("resources/siren.mp3");
         const audio = new Audio(audioUrl);
@@ -132,8 +126,8 @@ async function init() {
 
     console.log('Initializing content script...');
     
-    const overlay = createOverlay(); // Show overlay with loading indicator
-    
+    const overlay = createOverlay(); 
+
     // Wait for budget to be loaded before proceeding
     try {
         const loadedBudget = await loadBudgetInfo();
@@ -141,7 +135,6 @@ async function init() {
         BUDGET = loadedBudget;
     } catch (error) {
         console.error('Failed to load budget, using default:', error);
-        // BUDGET keeps its default value of 300
     }
 
     const totalAmount = findOrderTotal();
@@ -153,7 +146,7 @@ async function init() {
         
         console.log("Price Detected:", totalAmount);
 
-        // Now we can safely use the loaded BUDGET
+        
         const overlayTitle = document.getElementById('overlayTitle');
         overlayTitle.appendChild(document.createTextNode(`You are spending $${totalAmount.toFixed(2)}.`)); 
 
@@ -165,7 +158,6 @@ async function init() {
         console.log('Budget being used for calculations:', BUDGET);
         createChart(Math.max(1, BUDGET - totalAmount), totalAmount);
 
-        // image/gif
         const image = document.createElement('img');
         console.log('Displaying image for risk level:', threshold.image);
         image.src = chrome.runtime.getURL(threshold.image);
@@ -182,7 +174,6 @@ async function init() {
         riskText.appendChild(document.createTextNode(`Risk Level: ${threshold.level}`));
         riskText.style.color = threshold.color;
     } else {
-        // If no total amount found, still hide loading
         showBudgetContent();
     }
 }
