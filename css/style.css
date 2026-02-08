@@ -11,6 +11,13 @@ body {
   line-height: 1.6;
 }
 
+/* Prevent scrolling when overlay is active */
+body.no-scroll {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+}
+
 /* Hero */
 .hero {
   background: linear-gradient(135deg, #16a34a, #22c55e);

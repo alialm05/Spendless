@@ -13,6 +13,26 @@ const overlayHolder = document.createElement('div');
 overlayHolder.style.all = "initial";
 document.body.appendChild(overlayHolder);
 
+// CSS-based scroll management functions
+function disableScroll() {
+    // Store current scroll position
+    const scrollY = window.scrollY;
+    document.body.style.top = `-${scrollY}px`;
+    document.body.dataset.scrollY = scrollY;
+    // Add CSS class to disable scrolling
+    document.body.classList.add('no-scroll');
+}
+
+function enableScroll() {
+    // Remove CSS class
+    document.body.classList.remove('no-scroll');
+    // Restore scroll position
+    const scrollY = document.body.dataset.scrollY;
+    document.body.style.top = '';
+    window.scrollTo(0, parseInt(scrollY || '0'));
+    delete document.body.dataset.scrollY;
+}
+
 
 // initialize audio obj
 function initializeAudio() {
@@ -83,6 +103,8 @@ function loadBudgetInfo() {
 function createOverlay() {
     const overlay = document.createElement('div');
     overlay.className = "budgetOverlay";
+    
+    // Disable scrolling when overlay is created
 
     overlay.innerHTML = `
         <h1>Monthly Budget Impact</h1>
@@ -103,6 +125,9 @@ function createOverlay() {
 
     document.getElementById('closeOverlay').addEventListener('click', (e) => {
         console.log('Overlay closed by user');
+        
+        // Re-enable scrolling before removing overlay
+        enableScroll();
         overlay.remove();
 
         const riskLevel = parseFloat(e.currentTarget.dataset.risk) || 0;
@@ -189,6 +214,11 @@ async function init() {
 
         const threshold = getRiskLevel(pUsed);
 
+        console.log('Risk level determined:', threshold.threshold);
+        if (threshold.threshold > 25) {
+            disableScroll();    
+        }
+
         console.log('Budget being used for calculations:', BUDGET);
         createChart(Math.max(1, BUDGET - totalAmount), totalAmount);
 
@@ -207,6 +237,8 @@ async function init() {
 
         riskText.appendChild(document.createTextNode(`Risk Level: ${threshold.level}`));
         riskText.style.color = threshold.color;
+
+
     } else {
         showBudgetContent();
     }
