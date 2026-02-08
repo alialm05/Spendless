@@ -1,225 +1,225 @@
  :root{
-    --bg:#f0fdf4;
-    --card:#ffffff;
-    --muted:#6b7280;
-    --accent:#059669;
-    --success:#10b981;
-    --danger:#f97316;
-    --warning:#f59e0b;
-    --glass: rgba(255,255,255,0.6);
-    --on-track-light:#ecfdf5;
-    --at-risk-light:#fff7ed;
-}
-html,body{height:100%;}
-body {
-    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #065f46 0%, #059669 25%, #10b981 50%, #34d399 75%, #6ee7b7 100%);
-    background-size: 400% 400%;
-    margin: 24px 12px;
-    color:#0f172a;
-}
-.container {
-    background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(240,253,250,0.95) 100%);
-    padding: 28px;
-    border-radius:16px;
-    box-shadow: 0 20px 60px rgba(5,150,105,0.2), 0 8px 30px rgba(15,23,42,0.1);
-    width: 100%;
-    max-width: 980px;
-    border: 1px solid rgba(5,150,105,0.15);
-    backdrop-filter: blur(10px);
-    position: relative;
-}
-.container::before {
-    content: '$ $ $ $ $ $ $ $';
-    position: absolute;
-    top: 10px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    font-size: 24px;
-    color: rgba(16, 185, 129, 0.15);
-    font-weight: bold;
-    letter-spacing: 8px;
-    pointer-events: none;
-}
-.container::after {
-    content: '$ $ $ $ $ $ $ $';
-    position: absolute;
-    bottom: 10px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    font-size: 24px;
-    color: rgba(16, 185, 129, 0.15);
-    font-weight: bold;
-    letter-spacing: 8px;
-    pointer-events: none;
-}
-h1{font-family:'Merriweather',serif;font-weight:700;margin:0 0 8px 0;text-align:center;color:#0b1220;font-size:32px;letter-spacing:-0.5px;background: linear-gradient(135deg, #065f46, #059669);-webkit-background-clip: text;-webkit-text-fill-color: transparent;background-clip: text;}
-h1::before {
-    content: '$ ';
-    color: #059669;
-    -webkit-text-fill-color: #059669;
-}
-h1::after {
-    content: ' $';
-    color: #059669;
-    -webkit-text-fill-color: #059669;
-}
-h3{font-weight:600;margin:8px 0;color:#1f2937;font-size:16px;text-transform:uppercase;letter-spacing:0.5px}
-section{background: linear-gradient(180deg, rgba(240,253,250,0.9), rgba(229,250,245,0.9));padding:12px;border-radius:10px;margin-top:8px;border-left:4px solid var(--accent);box-shadow:0 4px 12px rgba(5,150,105,0.08)}
-label{display:inline-flex;align-items:center;color:var(--muted)}
-input[type=number], select{padding:8px 10px;border-radius:8px;border:2px solid rgba(5,150,105,0.3);background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(240,253,250,0.9));outline:none;width:160px;transition:0.2s}
-input[type=number]:focus, select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(5,150,105,0.1)}
-input::placeholder{color:#9ca3af}
-#planningForm{display:grid;grid-template-columns:1fr;gap:12px}
-.controls{display:flex;gap:8px}
-button{cursor:pointer;border-radius:8px;padding:8px 12px;border:none;font-weight:600}
-button:active{transform:translateY(1px)}
-button.secondary{background:#fff;border:1px solid #e6e9f2;color:#0f172a;transition:0.2s}
-button.secondary:hover{background:#f9fafb;border-color:#d1d5db}
-button.primary{background:var(--accent);color:#fff;transition:0.2s}
-button.primary:hover{background:#4338ca;box-shadow:0 4px 12px rgba(79,70,229,0.3)}
-button.positive{background:var(--success);color:#fff;transition:0.2s}
-button.positive:hover{background:#059669;box-shadow:0 4px 12px rgba(16,185,129,0.3)}
-.small{font-size:13px;color:var(--muted)}
-#debtHealth{background:linear-gradient(180deg,#fbfcfd,#fafbff);padding:14px;border-radius:10px;border-left:4px solid var(--accent);margin-top:8px!important;line-height:1.6;font-size:13px}
-#debtHealth div{margin:6px 0;color:#374151}
-#debtHealth strong{font-weight:700;color:#1f2937}
-#debtHealth > div:first-child{border-bottom:1px solid rgba(79,70,229,0.1);padding-bottom:8px;margin-bottom:8px}
-#debtHealth .on-track{background:var(--on-track-light);border-left:4px solid var(--success);padding:10px;border-radius:6px;color:#047857;margin-top:8px;font-weight:500}
-#debtHealth .at-risk{background:var(--at-risk-light);border-left:4px solid var(--warning);padding:10px;border-radius:6px;color:#b45309;margin-top:8px;font-weight:500}
-#realtimeFeedback{background:linear-gradient(180deg, #f0fdf4, #dbeafe);padding:12px;border-radius:8px;border:1px solid rgba(5,150,105,0.2);margin-top:8px;text-align:center;font-weight:600;font-size:14px;display:none}
-#realtimeFeedback.safe{background:linear-gradient(180deg, #ecfdf5, #d1fae5);color:#065f46;border-color:rgba(5,150,105,0.3)}
-#realtimeFeedback.tight{background:linear-gradient(180deg, #fffbeb, #fef3c7);color:#92400e;border-color:rgba(245,158,11,0.3)}
-#realtimeFeedback.danger{background:linear-gradient(180deg, #fef2f2, #fee2e2);color:#991b1b;border-color:rgba(249,115,22,0.3)}
-#result pre{background:linear-gradient(180deg, #f0fdf4, #dbeafe);padding:14px;border-radius:8px;border-left:4px solid var(--accent);overflow:auto;box-shadow:0 4px 12px rgba(5,150,105,0.08)}
-#expensesChart{max-width:100%;height:320px;border-radius:12px;background:linear-gradient(180deg, #ffffff, #f0fdf4);box-shadow:0 8px 24px rgba(5,150,105,0.15);padding:8px;border:1px solid rgba(5,150,105,0.1)}
-.debt-row input{width:140px}
-#wants {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-}
-#wantsBudgetHeader {
-    background: linear-gradient(135deg, #065f46 0%, #059669 100%);
-    color: white;
-    padding: 16px;
-    border-radius: 8px 8px 0 0;
-    margin: -12px -12px 0 -12px;
-    font-size: 14px;
-    font-weight: 600;
-}
-#wantsBudgetHeader div {
-    margin: 6px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-#wantsBudgetHeader .label {
-    opacity: 0.95;
-}
-#wantsBudgetHeader .amount {
-    font-size: 18px;
-    font-weight: 700;
-    background: rgba(255,255,255,0.15);
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-family: 'Courier New', monospace;
-}
-.wants-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 12px;
-    border-bottom: 1px solid rgba(5,150,105,0.1);
-    transition: background 0.2s;
-}
-.wants-row:hover {
-    background: rgba(16, 185, 129, 0.05);
-}
-.wants-row:last-child {
-    border-bottom: none;
-    border-radius: 0 0 8px 8px;
-}
-.wants-row-label {
-    font-weight: 500;
-    color: #1f2937;
-    font-size: 14px;
-}
-.wants-row-input-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-.wants-row-input-wrapper span {
-    font-weight: 600;
-    color: var(--accent);
-    font-size: 14px;
-}
-.wants-row-input-wrapper input {
-    width: 120px !important;
-    padding: 8px 10px !important;
-    border-radius: 6px !important;
-    border: 2px solid rgba(5,150,105,0.2) !important;
-    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(240,253,250,0.95)) !important;
-    font-size: 14px !important;
-    transition: all 0.2s !important;
-}
-.wants-row-input-wrapper input:focus {
-    border-color: var(--accent) !important;
-    box-shadow: 0 0 0 3px rgba(5,150,105,0.1) !important;
-    background: #ffffff !important;
-}
-#wantsBudgetWarning {
-    background: linear-gradient(135deg, #fef2f2, #fee2e2);
-    color: #991b1b;
-    padding: 12px 16px;
-    border-radius: 6px;
-    border-left: 4px solid #ef4444;
-    margin: 12px 0 0 0;
-    font-weight: 600;
-    font-size: 13px;
-    display: none;
-}
-#wantsBudgetWarning strong {
-    color: #7f1d1d;
-}
-.goal-buttons {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-.goal-btn {
-    flex: 1;
-    min-width: 140px;
-    padding: 12px 16px;
-    border: 2px solid rgba(5,150,105,0.3);
-    border-radius: 8px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(240,253,250,0.95));
-    color: #1f2937;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 13px;
-}
-.goal-btn:hover {
-    border-color: var(--accent);
-    background: linear-gradient(180deg, rgba(255,255,255,1), rgba(229,250,245,1));
-    box-shadow: 0 2px 8px rgba(5,150,105,0.15);
-}
-.goal-btn.active {
-    background: linear-gradient(135deg, #065f46, #059669);
-    color: white;
-    border-color: var(--accent);
-    box-shadow: 0 4px 12px rgba(5,150,105,0.3);
-}
-@media(min-width:900px){
-    #planningForm{grid-template-columns:1fr 420px}
-    #planningForm > section{grid-column:1/span 1}
-    #expensesChart{height:360px}
-}
+            --bg:#f0fdf4;
+            --card:#ffffff;
+            --muted:#6b7280;
+            --accent:#059669;
+            --success:#10b981;
+            --danger:#f97316;
+            --warning:#f59e0b;
+            --glass: rgba(255,255,255,0.6);
+            --on-track-light:#ecfdf5;
+            --at-risk-light:#fff7ed;
+        }
+        html,body{height:100%;}
+        body {
+            font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #065f46 0%, #059669 25%, #10b981 50%, #34d399 75%, #6ee7b7 100%);
+            background-size: 400% 400%;
+            margin: 24px 12px;
+            color:#0f172a;
+        }
+        .container {
+            background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(240,253,250,0.95) 100%);
+            padding: 28px;
+            border-radius:16px;
+            box-shadow: 0 20px 60px rgba(5,150,105,0.2), 0 8px 30px rgba(15,23,42,0.1);
+            width: 100%;
+            max-width: 980px;
+            border: 1px solid rgba(5,150,105,0.15);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+        .container::before {
+            content: '$ $ $ $ $ $ $ $';
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 24px;
+            color: rgba(16, 185, 129, 0.15);
+            font-weight: bold;
+            letter-spacing: 8px;
+            pointer-events: none;
+        }
+        .container::after {
+            content: '$ $ $ $ $ $ $ $';
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 24px;
+            color: rgba(16, 185, 129, 0.15);
+            font-weight: bold;
+            letter-spacing: 8px;
+            pointer-events: none;
+        }
+        h1{font-family:'Merriweather',serif;font-weight:700;margin:0 0 8px 0;text-align:center;color:#0b1220;font-size:32px;letter-spacing:-0.5px;background: linear-gradient(135deg, #065f46, #059669);-webkit-background-clip: text;-webkit-text-fill-color: transparent;background-clip: text;}
+        h1::before {
+            content: '$ ';
+            color: #059669;
+            -webkit-text-fill-color: #059669;
+        }
+        h1::after {
+            content: ' $';
+            color: #059669;
+            -webkit-text-fill-color: #059669;
+        }
+        h3{font-weight:600;margin:8px 0;color:#1f2937;font-size:16px;text-transform:uppercase;letter-spacing:0.5px}
+        section{background: linear-gradient(180deg, rgba(240,253,250,0.9), rgba(229,250,245,0.9));padding:12px;border-radius:10px;margin-top:8px;border-left:4px solid var(--accent);box-shadow:0 4px 12px rgba(5,150,105,0.08)}
+        label{display:inline-flex;align-items:center;color:var(--muted)}
+        input[type=number], select{padding:8px 10px;border-radius:8px;border:2px solid rgba(5,150,105,0.3);background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(240,253,250,0.9));outline:none;width:160px;transition:0.2s}
+        input[type=number]:focus, select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(5,150,105,0.1)}
+        input::placeholder{color:#9ca3af}
+        #planningForm{display:grid;grid-template-columns:1fr;gap:12px}
+        .controls{display:flex;gap:8px}
+        button{cursor:pointer;border-radius:8px;padding:8px 12px;border:none;font-weight:600}
+        button:active{transform:translateY(1px)}
+        button.secondary{background:#fff;border:1px solid #e6e9f2;color:#0f172a;transition:0.2s}
+        button.secondary:hover{background:#f9fafb;border-color:#d1d5db}
+        button.primary{background:var(--accent);color:#fff;transition:0.2s}
+        button.primary:hover{background:#4338ca;box-shadow:0 4px 12px rgba(79,70,229,0.3)}
+        button.positive{background:var(--success);color:#fff;transition:0.2s}
+        button.positive:hover{background:#059669;box-shadow:0 4px 12px rgba(16,185,129,0.3)}
+        .small{font-size:13px;color:var(--muted)}
+        #debtHealth{background:linear-gradient(180deg,#fbfcfd,#fafbff);padding:14px;border-radius:10px;border-left:4px solid var(--accent);margin-top:8px!important;line-height:1.6;font-size:13px}
+        #debtHealth div{margin:6px 0;color:#374151}
+        #debtHealth strong{font-weight:700;color:#1f2937}
+        #debtHealth > div:first-child{border-bottom:1px solid rgba(79,70,229,0.1);padding-bottom:8px;margin-bottom:8px}
+        #debtHealth .on-track{background:var(--on-track-light);border-left:4px solid var(--success);padding:10px;border-radius:6px;color:#047857;margin-top:8px;font-weight:500}
+        #debtHealth .at-risk{background:var(--at-risk-light);border-left:4px solid var(--warning);padding:10px;border-radius:6px;color:#b45309;margin-top:8px;font-weight:500}
+        #realtimeFeedback{background:linear-gradient(180deg, #f0fdf4, #dbeafe);padding:12px;border-radius:8px;border:1px solid rgba(5,150,105,0.2);margin-top:8px;text-align:center;font-weight:600;font-size:14px;display:none}
+        #realtimeFeedback.safe{background:linear-gradient(180deg, #ecfdf5, #d1fae5);color:#065f46;border-color:rgba(5,150,105,0.3)}
+        #realtimeFeedback.tight{background:linear-gradient(180deg, #fffbeb, #fef3c7);color:#92400e;border-color:rgba(245,158,11,0.3)}
+        #realtimeFeedback.danger{background:linear-gradient(180deg, #fef2f2, #fee2e2);color:#991b1b;border-color:rgba(249,115,22,0.3)}
+        #result pre{background:linear-gradient(180deg, #f0fdf4, #dbeafe);padding:14px;border-radius:8px;border-left:4px solid var(--accent);overflow:auto;box-shadow:0 4px 12px rgba(5,150,105,0.08)}
+        #expensesChart{max-width:100%;height:320px;border-radius:12px;background:linear-gradient(180deg, #ffffff, #f0fdf4);box-shadow:0 8px 24px rgba(5,150,105,0.15);padding:8px;border:1px solid rgba(5,150,105,0.1)}
+        .debt-row input{width:140px}
+        #wants {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        #wantsBudgetHeader {
+            background: linear-gradient(135deg, #065f46 0%, #059669 100%);
+            color: white;
+            padding: 16px;
+            border-radius: 8px 8px 0 0;
+            margin: -12px -12px 0 -12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        #wantsBudgetHeader div {
+            margin: 6px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #wantsBudgetHeader .label {
+            opacity: 0.95;
+        }
+        #wantsBudgetHeader .amount {
+            font-size: 18px;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+        }
+        .wants-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 12px;
+            border-bottom: 1px solid rgba(5,150,105,0.1);
+            transition: background 0.2s;
+        }
+        .wants-row:hover {
+            background: rgba(16, 185, 129, 0.05);
+        }
+        .wants-row:last-child {
+            border-bottom: none;
+            border-radius: 0 0 8px 8px;
+        }
+        .wants-row-label {
+            font-weight: 500;
+            color: #1f2937;
+            font-size: 14px;
+        }
+        .wants-row-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .wants-row-input-wrapper span {
+            font-weight: 600;
+            color: var(--accent);
+            font-size: 14px;
+        }
+        .wants-row-input-wrapper input {
+            width: 120px !important;
+            padding: 8px 10px !important;
+            border-radius: 6px !important;
+            border: 2px solid rgba(5,150,105,0.2) !important;
+            background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(240,253,250,0.95)) !important;
+            font-size: 14px !important;
+            transition: all 0.2s !important;
+        }
+        .wants-row-input-wrapper input:focus {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 3px rgba(5,150,105,0.1) !important;
+            background: #ffffff !important;
+        }
+        #wantsBudgetWarning {
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 6px;
+            border-left: 4px solid #ef4444;
+            margin: 12px 0 0 0;
+            font-weight: 600;
+            font-size: 13px;
+            display: none;
+        }
+        #wantsBudgetWarning strong {
+            color: #7f1d1d;
+        }
+        .goal-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .goal-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 16px;
+            border: 2px solid rgba(5,150,105,0.3);
+            border-radius: 8px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(240,253,250,0.95));
+            color: #1f2937;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 13px;
+        }
+        .goal-btn:hover {
+            border-color: var(--accent);
+            background: linear-gradient(180deg, rgba(255,255,255,1), rgba(229,250,245,1));
+            box-shadow: 0 2px 8px rgba(5,150,105,0.15);
+        }
+        .goal-btn.active {
+            background: linear-gradient(135deg, #065f46, #059669);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(5,150,105,0.3);
+        }
+        @media(min-width:900px){
+            #planningForm{grid-template-columns:1fr 420px}
+            #planningForm > section{grid-column:1/span 1}
+            #expensesChart{height:360px}
+        }

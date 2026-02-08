@@ -7,18 +7,26 @@
     <title>Expenses Chart</title>
     <script src="javascript/chart.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/form.css">
 </head>
 <body>
     <div class="container">
-        <h1>$PENDLESS</h1>
+        <div class="app-header">
+            <h1>$PENDLESS</h1>
+            <div class="subtitle">Plan smarter. Save more. Spend with purpose.</div>
+        </div>
+        <hr class="header-divider" />
 
-        <form id="planningForm" style="display:flex;flex-direction:column;gap:12px;">
-            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
-                <label>Monthly Income:
-                    <input id="income" type="number" min="0" step="0.01" style="margin-left:6px;width:160px;padding:6px;border-radius:4px;border:1px solid #ccc;" />
-                </label>
-            </div>
+        <form id="planningForm" style="display:flex;flex-direction:column;gap:12px;margin-top:6px;">
+            <section id="incomeSection">
+                <h3>Monthly Income</h3>
+                <div class="income-row">
+                    <label for="income">Enter your monthly take-home pay</label>
+                    <div class="income-input">
+                            <span class="income-dollar">$</span>
+                            <input id="income" type="number" min="0" step="0.01" placeholder="0.00" />
+                        </div>
+                </div>
+            </section>
 
             <div id="realtimeFeedback">
                 <span id="feedbackText">💰 Money Remaining: $0.00</span>
@@ -35,7 +43,7 @@
 
             <section>
                 <h3 style="margin:6px 0">Essentials</h3>
-                <div id="essentials" style="display:grid;grid-template-columns:1fr 120px;gap:8px;align-items:center">
+                <div id="essentials" class="essentials-list">
                     <!-- essentials will be populated by JS -->
                 </div>
             </section>
@@ -43,10 +51,9 @@
             <section>
                 <h3 style="margin:6px 0">Select Your Goal</h3>
                 <div class="goal-buttons">
-                    <button type="button" class="goal-btn active" data-goal="1">💾 Save money</button>
-                    <button type="button" class="goal-btn" data-goal="2">🛍️ Spend on wants</button>
-                    <button type="button" class="goal-btn" data-goal="3">🔀 Save & spend</button>
-                    <button type="button" class="goal-btn" data-goal="4">💳 Pay off debt</button>
+                    <button type="button" class="goal-btn active" data-goal="1"><span class="icon">🐖</span> <span>Save money</span></button>
+                    <button type="button" class="goal-btn" data-goal="2"><span class="icon">🪙</span> <span>Spend on wants</span></button>
+                    <button type="button" class="goal-btn" data-goal="3"><span class="icon">💰</span> <span>Save & spend</span></button>
                 </div>
 
                 <div id="extraDebtAllocations" style="margin-top:8px;display:none">
