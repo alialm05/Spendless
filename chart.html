@@ -198,6 +198,35 @@
         #wantsBudgetWarning strong {
             color: #7f1d1d;
         }
+        .goal-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .goal-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 16px;
+            border: 2px solid rgba(5,150,105,0.3);
+            border-radius: 8px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(240,253,250,0.95));
+            color: #1f2937;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 13px;
+        }
+        .goal-btn:hover {
+            border-color: var(--accent);
+            background: linear-gradient(180deg, rgba(255,255,255,1), rgba(229,250,245,1));
+            box-shadow: 0 2px 8px rgba(5,150,105,0.15);
+        }
+        .goal-btn.active {
+            background: linear-gradient(135deg, #065f46, #059669);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(5,150,105,0.3);
+        }
         @media(min-width:900px){
             #planningForm{grid-template-columns:1fr 420px}
             #planningForm > section{grid-column:1/span 1}
@@ -238,17 +267,12 @@
             </section>
 
             <section>
-                <h3 style="margin:6px 0">Goal</h3>
-                <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-                    <select id="goalSelect">
-                        <option value="1">1 - Save money</option>
-                        <option value="2">2 - Spend on wants</option>
-                        <option value="3">3 - Save and spend</option>
-                        <option value="4">4 - Pay off more debt</option>
-                    </select>
-                    <label style="font-size:14px">On track with debt?
-                        <select id="onTrack"><option value="y">y</option><option value="n">n</option></select>
-                    </label>
+                <h3 style="margin:6px 0">Select Your Goal</h3>
+                <div class="goal-buttons">
+                    <button type="button" class="goal-btn active" data-goal="1">💾 Save money</button>
+                    <button type="button" class="goal-btn" data-goal="2">🛍️ Spend on wants</button>
+                    <button type="button" class="goal-btn" data-goal="3">🔀 Save & spend</button>
+                    <button type="button" class="goal-btn" data-goal="4">💳 Pay off debt</button>
                 </div>
 
                 <div id="extraDebtAllocations" style="margin-top:8px;display:none">
@@ -273,6 +297,7 @@
                             <span class="label">Remaining to Spend:</span>
                             <span class="amount" id="wantsBudgetRemaining">$0.00</span>
                         </div>
+                        <div id="wantsBudgetNote">&nbsp;</div>
                     </div>
                     <!-- wants fields populated by JS -->
                 </div>
@@ -381,7 +406,7 @@
                 amt.dataset.category = cat;
                 
                 // Real-time input validation and budget tracking
-                amt.addEventListener('input', updateWantsBudgetTracking);
+                amt.addEventListener('input', (e) => { updateWantsBudgetTracking(e); updateRealtimeFeedback(); });
                 
                 inputWrapper.appendChild(dollarSign);
                 inputWrapper.appendChild(amt);
@@ -393,7 +418,7 @@
             });
         }
         
-        function updateWantsBudgetTracking() {
+        function updateWantsBudgetTracking(event) {
             const wantsContainer = $('wants');
             const inputs = wantsContainer.querySelectorAll('input[data-idx]');
             
@@ -423,16 +448,17 @@
             }
             
             // Cap input values at remaining budget (prevent overspending per field)
-            if (totalWantsEntered > maxWantsBudget && maxWantsBudget > 0) {
+            if (totalWantsEntered > maxWantsBudget && maxWantsBudget > 0 && event && event.target) {
                 // This input would exceed budget, cap it
                 const currentInput = event.target;
                 const currentValue = parseFloat(currentInput.value) || 0;
                 const othersTotal = totalWantsEntered - currentValue;
                 const allowedForThis = Math.max(0, maxWantsBudget - othersTotal);
-                
+
                 if (currentValue > allowedForThis) {
                     currentInput.value = allowedForThis.toFixed(2);
-                    updateWantsBudgetTracking(); // Recursive call to update display
+                    // Re-run tracker using the adjusted input as the event source
+                    updateWantsBudgetTracking({ target: currentInput });
                 }
             }
         }
@@ -537,8 +563,8 @@
         // Real-time budget feedback
         function updateRealtimeFeedback() {
             const income = parseFloat($('income').value) || 0;
-            
-            // Debts
+
+            // Debts - determine monthly debt total if entries exist
             const debtsListDiv = $('debtsList');
             const countVal = debtsListDiv.querySelector('#debtsCount') ? (parseInt(debtsListDiv.querySelector('#debtsCount').value) || 0) : 0;
             let monthlyDebtTotal = 0;
@@ -556,33 +582,72 @@
                 }
             }
 
-            // Essentials
+            // Essentials total
             let essentialsTotal = 0;
             const essentialsContainer = $('essentials');
             const essentialAmounts = essentialsContainer.querySelectorAll('input[data-idx]');
-            essentialAmounts.forEach(input => {
-                essentialsTotal += parseFloat(input.value) || 0;
-            });
+            essentialAmounts.forEach(input => { essentialsTotal += parseFloat(input.value) || 0; });
 
-            // Wants
-            let wantsTotal = 0;
+            // Calculate leftover AFTER fixed expenses (debt + essentials) - this is shown BEFORE wants
+            const leftover_after_fixed_live = Math.max(0, income - (monthlyDebtTotal + essentialsTotal));
+
+            // Determine active goal and reservation percentage
+            const activeGoal = parseInt(document.querySelector('.goal-btn.active')?.dataset.goal) || 1;
+            const reservationMap = {1:75,2:5,3:50,4:70};
+            const reservedPct = reservationMap[activeGoal] || 75;
+
+            // Max wants budget available BEFORE wants are entered
+            const maxWantsBudget = Math.max(0, leftover_after_fixed_live * (1 - (reservedPct/100)));
+
+            // Update wants header (visible before Calculate)
             const wantsContainer = $('wants');
-            const wantAmounts = wantsContainer.querySelectorAll('input[data-idx]');
-            wantAmounts.forEach(input => {
-                wantsTotal += parseFloat(input.value) || 0;
-            });
+            const wantsBudgetHeader = wantsContainer.querySelector('#wantsBudgetHeader');
+            const wantsBudgetGoalName = $('wantsBudgetGoalName');
+            const wantsBudgetMax = $('wantsBudgetMax');
+            const wantsBudgetRemaining = $('wantsBudgetRemaining');
+            if (income > 0 && wantsBudgetHeader) {
+                wantsBudgetHeader.style.display = 'block';
+                const goalNameDisplay = activeGoal === 1 ? 'Save money (75% reserved)'
+                    : activeGoal === 2 ? 'Spend on wants (5% reserved)'
+                    : activeGoal === 3 ? 'Save and spend (50% reserved)'
+                    : 'Pay off debt (70% reserved)';
+                wantsBudgetGoalName.textContent = goalNameDisplay;
+                wantsBudgetMax.textContent = `$${maxWantsBudget.toFixed(2)}`;
+                // store max budget for wants live tracking
+                wantsContainer.dataset.maxBudget = maxWantsBudget.toString();
+            } else if (wantsBudgetHeader) {
+                wantsBudgetHeader.style.display = 'none';
+                wantsContainer.dataset.maxBudget = '0';
+            }
 
+            // Update remaining after current wants inputs
+            const wantInputs = wantsContainer.querySelectorAll('input[data-idx]');
+            let totalWantsEntered = 0;
+            wantInputs.forEach(i => totalWantsEntered += parseFloat(i.value) || 0);
+            const remainingForWants = Math.max(0, maxWantsBudget - totalWantsEntered);
+            if (wantsBudgetRemaining) {
+                wantsBudgetRemaining.textContent = `$${remainingForWants.toFixed(2)}`;
+                wantsBudgetRemaining.style.color = totalWantsEntered > maxWantsBudget ? '#ef4444' : 'white';
+            }
+
+            // Show/hide wants warning
+            const warningEl = $('wantsBudgetWarning');
+            if (totalWantsEntered > maxWantsBudget && maxWantsBudget > 0) {
+                warningEl.style.display = 'block';
+            } else {
+                warningEl.style.display = 'none';
+            }
+
+            // Overall realtime money left (income - all current entries)
+            let wantsTotal = totalWantsEntered;
             const totalSpent = monthlyDebtTotal + essentialsTotal + wantsTotal;
             const moneyLeft = income - totalSpent;
 
             const feedbackEl = $('realtimeFeedback');
             const feedbackText = $('feedbackText');
-            
             if (income > 0) {
                 feedbackEl.style.display = 'block';
-                feedbackText.textContent = `💰 Money Remaining: $${moneyLeft.toFixed(2)}`;
-
-                // Color coding
+                // Keep percent based coloring for overall buffer
                 const percentLeft = (moneyLeft / income) * 100;
                 feedbackEl.className = '';
                 if (moneyLeft < 0) {
@@ -696,9 +761,9 @@
             state.leftover_after_fixed = Math.round(leftover_after_fixed*100)/100;
 
             // 4. Goal Selection (only matters if leftover > 0)
-            const goal = leftover_after_fixed > 0 ? (parseInt($('goalSelect').value) || 1) : 0;
+            const goal = leftover_after_fixed > 0 ? (parseInt(document.querySelector('.goal-btn.active')?.dataset.goal) || 1) : 0;
             state.goal = goal;
-            const on_track = $('onTrack').value || 'n';
+            const on_track = 'n';  // Removed on track field
             state.on_track = on_track;
 
             // Initialize allocation variables
@@ -1009,66 +1074,56 @@
             });
         });
 
-        // show/hide extraAllocInputs when goal select changes & update wants availability
-        $('goalSelect').addEventListener('change', () => {
-            const g = parseInt($('goalSelect').value);
-            const extraDiv = $('extraDebtAllocations');
-            const extraInputs = $('extraAllocInputs');
-            const wantsContainer = $('wants');
-            const wantsInputs = wantsContainer.querySelectorAll('input[data-idx]');
-            
-            if (g === 4) {
-                extraDiv.style.display = 'block';
-                // populate inputs for each debt
-                extraInputs.innerHTML = '';
-                state.debts.forEach(d => {
-                    const row = document.createElement('div');
-                    row.style.display = 'flex'; row.style.gap = '8px'; row.style.alignItems = 'center';
-                    const label = document.createElement('label'); label.textContent = `How much extra to pay toward ${d.name} (max): `;
-                    const inp = document.createElement('input'); inp.type = 'number'; inp.min = 0; inp.step = '0.01'; inp.style.width = '140px';
-                    row.appendChild(label); row.appendChild(inp);
-                    extraInputs.appendChild(row);
-                });
-                // Disable wants inputs for goal 4 (debt payoff has priority)
-                wantsInputs.forEach(input => input.disabled = true);
-                wantsInputs.forEach(input => input.style.opacity = '0.5');
-            } else {
-                extraDiv.style.display = 'none';
-                extraInputs.innerHTML = '';
-                // Re-enable wants inputs for other goals
-                wantsInputs.forEach(input => input.disabled = false);
-                wantsInputs.forEach(input => input.style.opacity = '1');
-            }
-            
-            // Also add advisory text about wants availability
-            let wantsNote = wantsContainer.querySelector('.wants-availability-note');
-            if (!wantsNote) {
-                wantsNote = document.createElement('div');
-                wantsNote.className = 'wants-availability-note';
-                wantsNote.style.fontSize = '12px';
-                wantsNote.style.color = '#666';
-                wantsNote.style.marginTop = '8px';
-                wantsNote.style.padding = '8px';
-                wantsNote.style.borderLeft = '2px solid #f59e0b';
-                wantsNote.style.backgroundColor = '#fffbeb';
-                wantsContainer.insertBefore(wantsNote, wantsContainer.firstChild);
-            }
-            
-            if (g === 1) {
-                wantsNote.textContent = '💾 Goal: Save money → 75% automatically reserved for savings. Max wants budget: 25% of leftover.';
-                wantsInputs.forEach(input => input.disabled = true);
-                wantsInputs.forEach(input => input.style.opacity = '0.5');
-            } else if (g === 4) {
-                wantsNote.textContent = '💳 Goal: Pay off more debt → 70% automatically applied to extra debt. Max wants budget: 30% of leftover.';
-            } else if (g === 2) {
-                wantsNote.textContent = '🛍️ Goal: Spend on wants → 5% automatically reserved for savings. Max wants budget: 95% of leftover.';
-                wantsInputs.forEach(input => input.disabled = false);
-                wantsInputs.forEach(input => input.style.opacity = '1');
-            } else if (g === 3) {
-                wantsNote.textContent = '🔀 Goal: Save and spend → 50% automatically reserved for savings. Max wants budget: 50% of leftover.';
-                wantsInputs.forEach(input => input.disabled = false);
-                wantsInputs.forEach(input => input.style.opacity = '1');
-            }
+        // Handle goal button clicks
+        document.querySelectorAll('.goal-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Remove active class from all buttons
+                document.querySelectorAll('.goal-btn').forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                btn.classList.add('active');
+                
+                const g = parseInt(btn.dataset.goal);
+                const extraDiv = $('extraDebtAllocations');
+                const extraInputs = $('extraAllocInputs');
+                const wantsContainer = $('wants');
+                const wantsInputs = wantsContainer.querySelectorAll('input[data-idx]');
+                
+                if (g === 4) {
+                    extraDiv.style.display = 'block';
+                    // populate inputs for each debt
+                    extraInputs.innerHTML = '';
+                    state.debts.forEach(d => {
+                        const row = document.createElement('div');
+                        row.style.display = 'flex'; row.style.gap = '8px'; row.style.alignItems = 'center';
+                        const label = document.createElement('label'); label.textContent = `How much extra to pay toward ${d.name} (max): `;
+                        const inp = document.createElement('input'); inp.type = 'number'; inp.min = 0; inp.step = '0.01'; inp.style.width = '140px';
+                        row.appendChild(label); row.appendChild(inp);
+                        extraInputs.appendChild(row);
+                    });
+                    // Disable wants inputs for goal 4 (debt payoff has priority)
+                    wantsInputs.forEach(input => input.disabled = true);
+                    wantsInputs.forEach(input => input.style.opacity = '0.5');
+                } else {
+                    extraDiv.style.display = 'none';
+                    extraInputs.innerHTML = '';
+                    // Re-enable wants inputs for other goals
+                    wantsInputs.forEach(input => input.disabled = false);
+                    wantsInputs.forEach(input => input.style.opacity = '1');
+                }
+                
+                // Handle input disabling for specific goals (only goal 4 disables wants)
+                if (g === 4) {
+                    wantsInputs.forEach(input => input.disabled = true);
+                    wantsInputs.forEach(input => input.style.opacity = '0.5');
+                } else {
+                    wantsInputs.forEach(input => input.disabled = false);
+                    wantsInputs.forEach(input => input.style.opacity = '1');
+                }
+                
+                // Refresh live feedback and wants header immediately when switching goals
+                updateRealtimeFeedback();
+            });
         });
 
         // Reset button
