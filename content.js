@@ -15,7 +15,7 @@ overlay.innerHTML = `
     <p>This purchase represents a new slice in your monthly spending.</p>
     <h1 id="overlayTitle"></h1>
     <h2 id="budgetStatus"></h2>
-    <canvas id="budgetChart" width="200" height="200"></canvas>
+    <canvas id="budgetChart" width="250" height="250" style="max-width:250px;max-height:250px;"></canvas>
     <button id="closeOverlay" data-risk="" style="display:none">I understand, let me shop</button>
 `;
 
@@ -30,13 +30,35 @@ document.getElementById('closeOverlay').addEventListener('click', (e) => {
 
     if (riskLevel < 25) return; // No sound for Low/Medium risk
 
-    const audioUrl = chrome.runtime.getURL("resources/siren.mp3");
+    /*const audioUrl = chrome.runtime.getURL("resources/siren.mp3");
     const audio = new Audio(audioUrl);
-    audio.play();
+    audio.play();*/
 });
+
+function createChart(purchase, moneyLeft){
+    const ctx = document.getElementById('budgetChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Budget', 'THIS PURCHASE'],
+            datasets: [{
+                data: [moneyLeft, purchase], // You'll replace 150 with your scraped price!
+                backgroundColor: ['#02c282', '#FF0000'] // Green for the budget, Red for the new purchase!
+            }]
+        },
+        options: {
+            plugins: {
+                title: { display: true, text: 'Monthly Budget Projection' }
+            }
+        }
+    });
+}
 
 // Initialize Popup on checkout
 function init() {
+
+    console.log('Initializing content script...');
+
     const totalAmount = findOrderTotal();
     console.log('Total amount found:', totalAmount);
     if (totalAmount) {
@@ -51,16 +73,24 @@ function init() {
 
         const riskU = getRiskLevel(pUsed);
 
+        createChart(BUDGET - totalAmount, totalAmount);
+
+        // image/gif
+        const image = document.createElement('img');
+        image.src = chrome.runtime.getURL(`resources/200.gif`);
+        image.style.width = '100px';
+        image.style.height = '100px';
+        overlay.appendChild(image);
+
         closeOverlay = document.getElementById('closeOverlay');
         closeOverlay.style.display = 'block';
         closeOverlay.dataset.risk = riskU.threshold;
+
 
         overlay.appendChild(closeOverlay);
 
         riskText.appendChild(document.createTextNode(`Risk Level: ${riskU.level}`));
         riskText.style.color = riskU.color;
-
-        
 
     }
 }
@@ -68,21 +98,3 @@ function init() {
 
 // Run 2 seconds after load to ensure Amazon's dynamic prices have appeared
 setTimeout(init, 1000);
-
-// 4. Initialize the Chart
-//const ctx = document.getElementById('budgetChart').getContext('2d');
-/*new Chart(ctx, {
-    type: 'pie',
-    data: {
-        labels: ['Rent', 'Food', 'Savings', 'THIS PURCHASE'],
-        datasets: [{
-            data: [1200, 400, 500, 150], // You'll replace 150 with your scraped price!
-            backgroundColor: ['#eee', '#ccc', '#aaa', '#FF0000'] // Red for the new purchase!
-        }]
-    },
-    options: {
-        plugins: {
-            title: { display: true, text: 'Monthly Budget Projection' }
-        }
-    }
-});*/

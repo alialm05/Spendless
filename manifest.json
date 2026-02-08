@@ -20,14 +20,16 @@
           "*://*/cart*",
           "https://pay.ebay.ca/*"
           ],
-        "js": ["javascript/utils.js", "javascript/parsing.js", "chart.js", "content.js", "https://cdn.jsdelivr.net/npm/chart.js"],
+        "js": ["javascript/utils.js", "javascript/parsing.js", "javascript/chart.umd.min.js", "content.js"],
         "css": ["css/style.css"]
     }
     ],
 
     "web_accessible_resources": [
     {
-        "resources": ["javascript/utils.js", "javascript/parsing.js", "chart.js", "content.js", "resources/siren.mp3"],
+        "resources": ["javascript/utils.js", 
+        "javascript/parsing.js", "javascript/chart.umd.min.js", "content.js", 
+        "resources/siren.mp3", "resources/*"],
         "matches": ["<all_urls>"]
     }
     ],
