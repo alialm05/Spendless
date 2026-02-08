@@ -13,19 +13,26 @@
   ],
    "content_scripts": [
     {
-        "matches": ["https://www.amazon.com/checkout*", "https://www.ebay.com/*"],
-        "js": ["utils.js", "chart.js", "Dashboard.js"]
+        "matches": [
+          "https://www.amazon.ca/checkout*", 
+          "https://www.amazon.com/checkout*",
+          "*://*/checkout*", 
+          "*://*/cart*",
+          "https://pay.ebay.ca/*"
+          ],
+        "js": ["javascript/utils.js", "javascript/parsing.js", "chart.js", "content.js"],
+        "css": ["style.css"]
     }
     ],
 
     "web_accessible_resources": [
     {
-        "resources": ["utils.js", "chart.js", "Dashboard.js", "./resources/siren.mp3"],
-        "matches": ["https://www.amazon.com/*", "https://www.ebay.com/*"]
+        "resources": ["javascript/utils.js", "javascript/parsing.js", "chart.js", "content.js", "resources/siren.mp3"],
+        "matches": ["<all_urls>"]
     }
     ],
   "action": {
-    "default_icon": "icon.png"
+    "default_icon": "resources/icon.png"
   },
     "options_ui": {
     "page": "home.html",

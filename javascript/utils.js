@@ -27,7 +27,7 @@ function getRiskLevel(percentage) {
             break;
         }
     }
-    return { level: currThreshold.level, color: currThreshold.color, message: currThreshold.message };
+    return { threshold: currThreshold.threshold, level: currThreshold.level, color: currThreshold.color, message: currThreshold.message };
 }
 
 function calculateBudgetRisk(currentBudget, spendingAmount) {
