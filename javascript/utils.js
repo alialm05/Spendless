@@ -31,6 +31,10 @@ function getRiskLevel(percentage) {
     return currThreshold;
 }
 
+function loadStateExtensionData(key) {
+    return chrome.storage.local.get([key]);
+}
+
 function calculateBudgetRisk(currentBudget, spendingAmount) {
     const percentageUsed = (spendingAmount / currentBudget) * 100;
     return percentageUsed
@@ -40,4 +44,5 @@ function calculateBudgetRisk(currentBudget, spendingAmount) {
 if (typeof window !== 'undefined') {
     window.calculateBudgetRisk = calculateBudgetRisk;
     window.riskThresholds = riskThresholds;
+    window.loadStateExtensionData = loadStateExtensionData;
 }
