@@ -273,9 +273,9 @@
                 <div class="income-row">
                     <label for="income">Enter your monthly take-home pay</label>
                     <div class="income-input">
-                        <span class="income-dollar">$</span>
-                        <input id="income" type="number" min="0" step="0.01" placeholder="0.00" />
-                    </div>
+                            <span class="income-dollar">$</span>
+                            <input id="income" type="number" min="0" step="0.01" placeholder="0.00" />
+                        </div>
                 </div>
             </section>
 
@@ -393,10 +393,12 @@
 
                 const dollarSign = document.createElement('span');
                 dollarSign.textContent = '$';
-                dollarSign.className = 'income-dollar';
+                dollarSign.style.fontWeight = '600';
+                dollarSign.style.color = 'var(--accent)';
 
                 const amt = document.createElement('input');
-                amt.type = 'number'; amt.min = 0; amt.step = '0.01'; amt.placeholder = '0.00';
+                amt.type = 'number'; amt.min = 0; amt.step = '0.01'; amt.placeholder = 'amount';
+                amt.style.width = '100px'; amt.style.marginLeft = '0px';
                 amt.dataset.idx = idx;
                 amt.addEventListener('input', () => updateRealtimeFeedback());
 
