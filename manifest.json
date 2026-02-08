@@ -23,7 +23,8 @@
         "https://www.amazon.com/checkout*",
         "*://*/checkout*",
         "*://*/cart*",
-        "https://pay.ebay.ca/*"
+        "https://pay.ebay.ca/*",
+        "https://pay.ebay.com/*"
       ],
       "js": [
         "javascript/utils.js",

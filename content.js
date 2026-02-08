@@ -1,9 +1,38 @@
 
 var BUDGET = 300;
 var BUDGET_LOADED = false
+
+// Create audio objects once at the module level
+const audioCache = {
+    cash: null,
+    siren: null,
+    initialized: false
+};
+
 const overlayHolder = document.createElement('div');
 overlayHolder.style.all = "initial";
 document.body.appendChild(overlayHolder);
+
+
+// initialize audio obj
+function initializeAudio() {
+    if (audioCache.initialized) return;
+    
+    try {
+        audioCache.cash = new Audio(chrome.runtime.getURL("resources/cash.mp3"));
+        audioCache.cash.volume = 0.75;
+        audioCache.cash.preload = 'auto';
+        
+        audioCache.siren = new Audio(chrome.runtime.getURL("resources/siren.mp3"));
+        audioCache.siren.volume = 0.75;
+        audioCache.siren.preload = 'auto';
+        
+        audioCache.initialized = true;
+        console.log('Audio objects initialized successfully');
+    } catch (error) {
+        console.error('Failed to initialize audio objects:', error);
+    }
+}
 
 function loadBudgetInfo() {
     if (BUDGET_LOADED) {
@@ -49,22 +78,24 @@ function loadBudgetInfo() {
     });
 }
 
+// Initialize audio when the script loads
+
 function createOverlay() {
     const overlay = document.createElement('div');
     overlay.className = "budgetOverlay";
 
     overlay.innerHTML = `
-        <h1 style="margin-top:0">Monthly Budget Impact</h1>
+        <h1>Monthly Budget Impact</h1>
         <p>This purchase represents a new slice in your monthly spending.</p>
-        <div id="loadingIndicator" style="text-align: center; color: #666;">
+        <div id="loadingIndicator">
             <p>Loading your budget data...</p>
             <div style="font-size: 24px;">⏳</div>
         </div>
-        <div id="budgetContent" style="display: none;">
+        <div id="budgetContent">
             <h1 id="overlayTitle"></h1>
             <h2 id="budgetStatus"></h2>
-            <canvas id="budgetChart" width="250" height="250" style="max-width:250px;max-height:250px;"></canvas>
-            <button id="closeOverlay" data-risk="" style="display:none">I understand, let me shop</button>
+            <canvas id="budgetChart" width="250" height="250"></canvas>
+            <button id="closeOverlay" data-risk="">I understand, let me shop</button>
         </div>
     `;
 
@@ -74,14 +105,14 @@ function createOverlay() {
         console.log('Overlay closed by user');
         overlay.remove();
 
-        const riskLevel = e.currentTarget.dataset.risk;
+        const riskLevel = parseFloat(e.currentTarget.dataset.risk) || 0;
+        console.log('Playing audio for risk level:', riskLevel);
 
-        if (riskLevel < 25) return; // no sound for Low/Medium risk
-
-        const audioUrl = chrome.runtime.getURL("resources/siren.mp3");
-        const audio = new Audio(audioUrl);
-        audio.volume = 0.75;
-        audio.play();
+        if (riskLevel < 25) {
+            audioCache.cash.play();
+        } else if (riskLevel < 50) {
+            audioCache.siren.play();
+        }
     });
 
     return overlay;
@@ -95,7 +126,7 @@ function showBudgetContent() {
         loadingEl.style.display = 'none';
     }
     if (contentEl) {
-        contentEl.style.display = 'block';
+        contentEl.classList.add('active');
     }
 }
 
@@ -117,6 +148,9 @@ function createChart(purchase, moneyLeft){
         }
     });
 }
+
+initializeAudio();
+
 
 // Initialize Popup on checkout
 async function init() {
@@ -166,7 +200,7 @@ async function init() {
         overlay.appendChild(image);
 
         const closeOverlay = document.getElementById('closeOverlay');
-        closeOverlay.style.display = 'block';
+        closeOverlay.classList.add('active');
         closeOverlay.dataset.risk = threshold.threshold;
 
         overlay.appendChild(closeOverlay);

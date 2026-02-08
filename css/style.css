@@ -139,39 +139,87 @@ footer {
 }
 
 .budgetOverlay {
-  position:fixed;
+  position: fixed;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   display: flex;
-  top:10%;
-  right:10%;
-  width:400px;
-  z-index:9999;
-  background:white;
-  border:2px solid #333;
-  padding:20px; 
+  top: 10%;
+  right: 10%;
+  width: 400px;
+  z-index: 9999;
+  background: white;
+  border: 2px solid #333;
+  padding: 20px; 
   box-shadow: 10px 10px 0px #000;
+  text-align: center; /* Center all text content */
   
   h2 {
     font-family: Arial, sans-serif !important;
     font-size: 18px !important;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+    text-align: center;
   }
 
   h1 {
     font-family: Arial, sans-serif !important;
     font-size: 24px !important;
     font-weight: bold !important;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    text-align: center;
   }
 
   p {
     font-family: Arial, sans-serif !important;
     font-size: 14px !important;
-
+    text-align: center;
   }
 
+  /* Center the canvas specifically */
+  canvas {
+    margin: 15px auto;
+    display: block;
+  }
 
+  /* Center the loading indicator */
+  #loadingIndicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+    color: #666;
+  }
+
+  /* Center the budget content container */
+  #budgetContent {
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* Show budget content when active */
+  #budgetContent.active {
+    display: flex;
+  }
+
+  /* Center the button */
+  button {
+    margin: 15px auto 0 auto;
+    display: block;
+  }
+
+  /* Initially hide the close button */
+  #closeOverlay {
+    display: none;
+  }
+
+  /* Show close button when active */
+  #closeOverlay.active {
+    display: block;
+  }
 }
 
 #closeOverlay {
