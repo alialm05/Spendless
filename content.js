@@ -30,9 +30,10 @@ document.getElementById('closeOverlay').addEventListener('click', (e) => {
 
     if (riskLevel < 25) return; // No sound for Low/Medium risk
 
-    /*const audioUrl = chrome.runtime.getURL("resources/siren.mp3");
+    const audioUrl = chrome.runtime.getURL("resources/siren.mp3");
     const audio = new Audio(audioUrl);
-    audio.play();*/
+    audio.volume = 0.75;
+    audio.play();
 });
 
 function createChart(purchase, moneyLeft){
